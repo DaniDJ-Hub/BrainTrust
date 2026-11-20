@@ -18,6 +18,16 @@ echo "=========================================================="
 echo "[1/8] Updating system packages..."
 dnf update -y
 
+# ── 1b. Swap (1 GB) — evita que el OOM killer mate la JVM en picos de memoria ─
+echo "[1b/8] Creating 1G swap file..."
+if [ ! -f /swapfile ]; then
+  fallocate -l 1G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  echo '/swapfile none swap defaults 0 0' >> /etc/fstab
+fi
+
 # ── 2. Install Docker ─────────────────────────────────────────────────────────
 echo "[2/8] Installing Docker..."
 dnf install -y docker
@@ -44,6 +54,8 @@ mkdir -p /var/log/braintrust
 chown ec2-user:ec2-user /var/log/braintrust
 mkdir -p /home/ec2-user
 chown ec2-user:ec2-user /home/ec2-user
+mkdir -p /home/ec2-user/init
+chown ec2-user:ec2-user /home/ec2-user/init
 
 # ── 6. Write .env file ────────────────────────────────────────────────────────
 echo "[6/8] Writing .env file..."
@@ -65,6 +77,20 @@ JWT_EXPIRATION=3600000
 # ── AWS ───────────────────────────────────────────────────────────────────────
 AWS_REGION=${aws_region}
 
+# ── Google Gemini — requerido por application-prod.yml (sin valor por defecto) ─
+GOOGLE_AI_API_KEY=${google_ai_api_key}
+# Modelo de Gemini. El nombre lleva "AI" dos veces porque el código lee la
+# propiedad google.ai.ai-detection-model (GOOGLE_AI_DETECTION_MODEL no tiene efecto)
+GOOGLE_AI_AI_DETECTION_MODEL=gemini-3.8-flash
+GOOGLE_AI_MODEL=gemini-3.8-flash
+
+# ── Hibernate: solo VALIDAR el esquema, nunca modificarlo en producción ────────
+DDL_AUTO=validate
+
+# ── Rutas dentro del contenedor (coinciden con los volúmenes del compose) ─────
+DOCUMENT_STORAGE_LOCAL_BASE_PATH=/app/storage/documents
+LOG_PATH=/app/logs
+
 # ── Server ────────────────────────────────────────────────────────────────────
 SERVER_PORT=8080
 
@@ -79,8 +105,6 @@ echo ".env written (permissions 600)"
 # ── 7. Write docker-compose.yml ───────────────────────────────────────────────
 echo "[7/8] Writing docker-compose.yml..."
 cat > /home/ec2-user/docker-compose.yml << 'DCEOF'
-version: '3.8'
-
 services:
   # ── PostgreSQL 16 ────────────────────────────────────────────────────────────
   postgres:
@@ -93,8 +117,16 @@ services:
       POSTGRES_PASSWORD: ${db_password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # Esquema SQL: se ejecuta solo la PRIMERA vez (volumen de datos vacío)
+      - /home/ec2-user/init:/docker-entrypoint-initdb.d:ro
     networks:
       - braintrust-net
+    mem_limit: 512m
+    logging: &default-logging
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${db_username} -d ${db_name}"]
       interval: 10s
@@ -102,9 +134,9 @@ services:
       retries: 5
       start_period: 30s
 
-  # ── Spring Boot Application ──────────────────────────────────────────────────
-  app:
-    image: eclipse-temurin:21-jre-alpine
+  # ── Spring Boot (imagen publicada por GitHub Actions en GHCR) ────────────────
+  braintrust-backend:
+    image: ${app_image}
     container_name: braintrust-app
     restart: always
     depends_on:
@@ -112,26 +144,24 @@ services:
         condition: service_healthy
     env_file:
       - /home/ec2-user/.env
+    environment:
+      # Igual que el Dockerfile, pero con 65% de RAM para el heap (antes 75%)
+      JAVA_OPTS: "-Djava.security.egd=file:/dev/./urandom -XX:+UseContainerSupport -XX:MaxRAMPercentage=65.0 -XX:+UseG1GC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8"
     volumes:
-      - /home/ec2-user/braintrust-container-app-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
-      - /var/log/braintrust:/var/log/braintrust
+      - app_storage:/app/storage
+      - app_logs:/app/logs
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"   # solo accesible desde el propio host (Nginx)
     networks:
       - braintrust-net
-    command: >
-      java
-      -Xmx512m
-      -Xms256m
-      -XX:+UseContainerSupport
-      -XX:MaxRAMPercentage=60.0
-      -jar /app/app.jar
+    mem_limit: 1200m
+    logging: *default-logging
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 90s
+      start_period: 120s
 
 networks:
   braintrust-net:
@@ -140,6 +170,8 @@ networks:
 volumes:
   postgres_data:
     driver: local
+  app_storage:
+  app_logs:
 DCEOF
 
 chown ec2-user:ec2-user /home/ec2-user/docker-compose.yml
@@ -166,7 +198,7 @@ server {
     client_max_body_size 50M;
 
     location / {
-        proxy_pass         http://localhost:8080;
+        proxy_pass         http://127.0.0.1:8080;
         proxy_http_version 1.1;
         proxy_set_header   Host              $host;
         proxy_set_header   X-Real-IP         $remote_addr;
@@ -177,7 +209,7 @@ server {
 
     # Health check endpoint (no auth required)
     location /actuator/health {
-        proxy_pass http://localhost:8080/actuator/health;
+        proxy_pass http://127.0.0.1:8080/actuator/health;
     }
 }
 NGINXEOF
@@ -190,11 +222,11 @@ echo "=========================================================="
 echo "BrainTrust Bootstrap COMPLETE: $(date)"
 echo ""
 echo "NEXT STEPS (from your local machine):"
-echo "  1. Upload JAR:"
-echo "     scp -i KEY.pem target/braintrust-container-app-0.0.1-SNAPSHOT.jar ec2-user@<IP>:/home/ec2-user/"
+echo "  1. Upload SQL schema BEFORE the first 'docker-compose up' (from repo root):"
+echo "     scp -i KEY.pem backend/init/*.sql ec2-user@<IP>:/home/ec2-user/init/"
 echo ""
 echo "  2. SSH in and start services:"
 echo "     ssh -i KEY.pem ec2-user@<IP>"
 echo "     docker-compose up -d"
-echo "     docker-compose logs -f app"
+echo "     docker-compose logs -f braintrust-backend"
 echo "=========================================================="

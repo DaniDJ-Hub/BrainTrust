@@ -83,3 +83,15 @@ variable "jwt_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "google_ai_api_key" {
+  description = "Google Gemini API key (GOOGLE_AI_API_KEY) — requerida por el perfil prod"
+  type        = string
+  sensitive   = true
+}
+
+variable "app_image" {
+  description = "Imagen Docker del backend publicada por GitHub Actions en GHCR"
+  type        = string
+  default     = "ghcr.io/solano204/braintrust/backend:latest"
+}

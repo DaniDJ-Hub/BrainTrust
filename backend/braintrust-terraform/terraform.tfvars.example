@@ -10,16 +10,23 @@ environment       = "prod"
 availability_zone = "us-east-1a"
 
 # EC2
-instance_type = "t3.micro"          # Free Tier eligible
-key_pair_name = "braintrust-key"    # Must already exist in AWS Console → EC2 → Key Pairs
+instance_type = "t3.small"          # 2 GB RAM (~$15/mes). "t3.micro" = 1 GB (~$7.6/mes), justo para Java + Postgres
+key_pair_name = "braintrust-key"    # Debe existir en AWS → EC2 → Key Pairs. El .pem va en ~/.ssh/, NUNCA en el repo
 
 # Your current public IP for SSH (run: curl -s ifconfig.me)
 my_ip_cidr = "YOUR_IP_HERE/32"
 
 # Database credentials (used in Docker Compose .env on EC2)
+# ⚠ Usa SOLO letras y números: Docker Compose interpreta "$" y alteraría el valor
 db_name     = "braintrust_db"
 db_username = "braintrust_user"
 db_password = "CHANGE_ME_STRONG_PASSWORD"
 
 # JWT secret — min 32 characters
 jwt_secret = "CHANGE_ME_256BIT_SECRET_AT_LEAST_32_CHARS"
+
+# Google Gemini API key (obligatoria: sin ella Spring Boot no arranca en prod)
+google_ai_api_key = "CHANGE_ME_GOOGLE_AI_API_KEY"
+
+# Opcional: fijar una versión concreta de la imagen en vez de "latest"
+# app_image = "ghcr.io/solano204/braintrust/backend:latest"

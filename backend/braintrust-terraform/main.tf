@@ -4,14 +4,7 @@
 ###############################################################################
 
 terraform {
-  required_version = ">= 1.6.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
+  # required_version y required_providers se declaran en versions.tf
 
   # Uncomment to store state remotely (recommended once you have an S3 bucket)
   # backend "s3" {
@@ -76,4 +69,8 @@ module "ec2" {
   db_password = var.db_password
   jwt_secret  = var.jwt_secret
   aws_region  = var.aws_region
+
+  # Imagen de la app y API key de Gemini (usadas en user_data.sh)
+  google_ai_api_key = var.google_ai_api_key
+  app_image         = var.app_image
 }
