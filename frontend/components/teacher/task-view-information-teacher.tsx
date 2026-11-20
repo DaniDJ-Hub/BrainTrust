@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { getCloudinaryDownloadUrl } from "@/app/utils/cloudinary/cloudinary-pdf";
+import { getDaysUntilDue } from "@/app/presentation/hooks/calendar/date-utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -144,7 +145,7 @@ export function VistaInfoTarea({ assignment, onClose }: PropsVistaInfoTarea) {
             value: 0,
             maxPoints: parseFloat(datosEdicion.maxPoints)
           },
-          dueDate: datosEdicion.dueDate || null,
+          dueDate: datosEdicion.dueDate !== (assignment.dueDate || "") ? datosEdicion.dueDate || null : undefined,
           allowLateSubmissions: datosEdicion.allowLateSubmissions,
           deliveryMode: datosEdicion.deliveryMode,
           submissionFormat: datosEdicion.submissionFormat
@@ -308,7 +309,7 @@ export function VistaInfoTarea({ assignment, onClose }: PropsVistaInfoTarea) {
     const ahora = new Date();
     const entrega = new Date(fechaEntrega);
     const diffMs = entrega.getTime() - ahora.getTime();
-    const diffDias = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    const diffDias = getDaysUntilDue(fechaEntrega);
     
     if (diffMs < 0) {
       return { text: "Vencido", color: "destructive" };
@@ -950,29 +951,7 @@ export function VistaInfoTarea({ assignment, onClose }: PropsVistaInfoTarea) {
                 <h4 className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">
                   Modo de Entrega
                 </h4>
-                {modoEdicion ? (
-                  <div className="flex flex-col sm:flex-row gap-2 mt-2">
-                    <Button
-                      variant={datosEdicion.deliveryMode === "INDIVIDUAL" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setDatosEdicion(prev => ({ ...prev, deliveryMode: "INDIVIDUAL" }))}
-                      className="text-xs"
-                    >
-                      <User className="h-4 w-4 mr-1" />
-                      Individual
-                    </Button>
-                    <Button
-                      variant={datosEdicion.deliveryMode === "TEAM" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setDatosEdicion(prev => ({ ...prev, deliveryMode: "TEAM" }))}
-                      className="text-xs"
-                    >
-                      <Users className="h-4 w-4 mr-1" />
-                      Grupal
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3 mt-2">
+                <div className="flex items-center gap-3 mt-2">
                     {assignment.deliveryMode === "TEAM" ? (
                       <>
                         <Users className="h-5 w-5 text-primary" />
@@ -995,6 +974,10 @@ export function VistaInfoTarea({ assignment, onClose }: PropsVistaInfoTarea) {
                       </>
                     )}
                   </div>
+                {modoEdicion && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    El modo de entrega no se puede cambiar después de crear la tarea.
+                  </p>
                 )}
               </div>
 

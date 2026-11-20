@@ -293,7 +293,14 @@ export async function updateAssignment(
       `/api/assignments/${assignmentId}`,
       command
     );
-    
+
+    if (assignmentData.dueDate) {
+      await apiClient.put<SuccessResponseDTO>(
+        `/api/assignments/${assignmentId}/due-date`,
+        { newDueDate: assignmentData.dueDate }
+      );
+    }
+
     const updatedAssignment = await fetchAssignmentById(assignmentId);
     
     console.log("Backend: Updated assignment:", assignmentId);

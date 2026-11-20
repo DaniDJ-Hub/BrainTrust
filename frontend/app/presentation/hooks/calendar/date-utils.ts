@@ -29,11 +29,11 @@ export function isInCurrentWeek(date: Date): boolean {
 
 export function getDaysUntilDue(dueDate: string | null): number {
   if (!dueDate) return Infinity;
-  
   const due = new Date(dueDate);
   const now = new Date();
-  const diffTime = due.getTime() - now.getTime();
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  if (due.getTime() < now.getTime()) return -1;
+  const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  return Math.round((startOfDay(due) - startOfDay(now)) / 86_400_000);
 }
 
 export function getTimelineUrgency(dueDate: string | null): "urgent" | "warning" | "normal" {
