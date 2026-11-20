@@ -3,10 +3,10 @@
 # Creates: VPC, public subnet, Internet Gateway, Route Table
 ###############################################################################
 
-variable "project"     {}
+variable "project" {}
 variable "environment" {}
-variable "vpc_cidr"    {}
-variable "az"          {}
+variable "vpc_cidr" {}
+variable "az" {}
 
 # ── VPC ──────────────────────────────────────────────────────────────────────
 resource "aws_vpc" "main" {
@@ -20,7 +20,7 @@ resource "aws_vpc" "main" {
 # ── Public Subnet ─────────────────────────────────────────────────────────────
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = cidrsubnet(var.vpc_cidr, 8, 1)  # 10.0.1.0/24
+  cidr_block              = cidrsubnet(var.vpc_cidr, 8, 1) # 10.0.1.0/24
   availability_zone       = var.az
   map_public_ip_on_launch = true
 
@@ -52,5 +52,5 @@ resource "aws_route_table_association" "public" {
 }
 
 # ── Outputs ───────────────────────────────────────────────────────────────────
-output "vpc_id"           { value = aws_vpc.main.id }
+output "vpc_id" { value = aws_vpc.main.id }
 output "public_subnet_id" { value = aws_subnet.public.id }
