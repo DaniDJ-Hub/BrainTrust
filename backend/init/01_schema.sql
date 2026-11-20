@@ -398,10 +398,10 @@ CREATE TABLE "public"."student_groups" (
 
 CREATE TABLE "public"."group_members" (
     "group_id" CHARACTER VARYING NOT NULL,
-    "student_id" CHARACTER VARYING,
-    PRIMARY KEY ("group_id"),
+    "student_id" CHARACTER VARYING NOT NULL,
+    PRIMARY KEY ("group_id", "student_id"),
     CONSTRAINT "fk_group_members_group" FOREIGN KEY ("group_id") REFERENCES "public"."student_groups"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "fk_group_members_student" FOREIGN KEY ("student_id") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "fk_group_members_student" FOREIGN KEY ("student_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ============================================================================
