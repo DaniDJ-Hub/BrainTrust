@@ -11,6 +11,7 @@ import { Users, Plus, Trash2, UserPlus, X, Search, Edit, MoreVertical, Loader2, 
 import { useAuth } from "@/app/context/AuthContext"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { toast } from "sonner"
 
 import type { UserId, CourseId } from "@/app/domain/valueObjects/CourseValues"
 import { 
@@ -93,6 +94,9 @@ const nuevosDatosEquipo: TeamWithIds = {
         setNombreNuevoEquipo("");
         setDescripcionNuevoEquipo("");
         setMiembrosSeleccionados([]);
+      },
+      onError: () => {
+        toast.error("No se pudo crear el grupo. Inténtalo de nuevo.");
       }
     });
   };
@@ -113,6 +117,9 @@ const nuevosDatosEquipo: TeamWithIds = {
         setEquipoSeleccionado(null);
         setNombreNuevoEquipo("");
         setDescripcionNuevoEquipo("");
+      },
+      onError: () => {
+        toast.error("No se pudieron guardar los cambios del grupo. Inténtalo de nuevo.");
       }
     });
   };
@@ -141,6 +148,9 @@ const nuevosDatosEquipo: TeamWithIds = {
           setMiembrosSeleccionados([]);
           setEquipoSeleccionado(null);
           setConsultaBusquedaMiembro("");
+        },
+        onError: () => {
+          toast.error("No se pudieron agregar los alumnos al grupo. Inténtalo de nuevo.");
         }
       });
     }
