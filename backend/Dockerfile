@@ -60,6 +60,7 @@ ENV JAVA_OPTS="\
 -XX:MaxRAMPercentage=75.0 \
 -XX:+UseG1GC \
 -XX:+UseStringDeduplication \
+-Duser.timezone=America/Mexico_City \
 -Dfile.encoding=UTF-8"
 
 # Run the application

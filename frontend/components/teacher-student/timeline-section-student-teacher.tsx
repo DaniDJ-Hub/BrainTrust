@@ -36,6 +36,7 @@ import { useUserTeam } from "./hooks/team-hooks";
 
 import { useThisWeekTasks } from "@/app/presentation/hooks/calendar/task-hooks";
 import { useThisWeekQuizzes } from "@/app/presentation/hooks/calendar/quiz-hooks";
+import { getDaysUntilDue } from "@/app/presentation/hooks/calendar/date-utils";
 
 export type DatosRecursoLineaTiempo = Assignment | Quiz;
 
@@ -114,13 +115,8 @@ const obtenerEstadoRecurso = (
   }
 };
 
-const obtenerDiasHastaEntrega = (fechaEntrega: string | null): number => {
-  if (!fechaEntrega) return Infinity;
-  const entrega = new Date(fechaEntrega);
-  const ahora = new Date();
-  const diffTiempo = entrega.getTime() - ahora.getTime();
-  return Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
-};
+const obtenerDiasHastaEntrega = (fechaEntrega: string | null): number =>
+  getDaysUntilDue(fechaEntrega);
 
 const obtenerUrgenciaLineaTiempo = (fechaEntrega: string | null): "urgent" | "warning" | "normal" => {
   const diasHastaEntrega = obtenerDiasHastaEntrega(fechaEntrega);

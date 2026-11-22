@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import type { Question } from "@/app/domain/entities/CourseEntities";
 import { useAuth } from "@/app/context/AuthContext";
+import { getDaysUntilDue } from "@/app/presentation/hooks/calendar/date-utils";
 import { useQuizDetail, useQuizMutations } from "../teacher-student/hooks/quiz-hooks";
 import { Quiz } from "@/app/domain/entities/CourseEntities";
 
@@ -339,7 +340,7 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
   const obtenerTiempoRestante = (fechaEntrega: string | null | undefined) => {
     if (!fechaEntrega) return { text: "Sin fecha de entrega", color: "secondary" as const };
     const diffMs = new Date(fechaEntrega).getTime() - Date.now();
-    const diffDias = Math.ceil(diffMs / 86_400_000);
+    const diffDias = getDaysUntilDue(fechaEntrega);
     if (diffMs < 0) return { text: "Vencido", color: "destructive" as const };
     if (diffDias === 0) {
       const hrs = Math.ceil(diffMs / 3_600_000);

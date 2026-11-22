@@ -294,6 +294,7 @@ CREATE TABLE "public"."assignments" (
     "active" BOOLEAN NOT NULL,
     "submission_format" CHARACTER VARYING NOT NULL DEFAULT 'DIGITAL',
     "target_type" CHARACTER VARYING NOT NULL DEFAULT 'INDIVIDUAL',
+    "allow_late_submissions" BOOLEAN NOT NULL DEFAULT TRUE,
     PRIMARY KEY ("id"),
     CONSTRAINT "fk_assignments_course" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "fk_assignments_unit" FOREIGN KEY ("unit_id") REFERENCES "public"."course_units"("id") ON DELETE SET NULL ON UPDATE CASCADE
@@ -398,10 +399,10 @@ CREATE TABLE "public"."student_groups" (
 
 CREATE TABLE "public"."group_members" (
     "group_id" CHARACTER VARYING NOT NULL,
-    "student_id" CHARACTER VARYING,
-    PRIMARY KEY ("group_id"),
+    "student_id" CHARACTER VARYING NOT NULL,
+    PRIMARY KEY ("group_id", "student_id"),
     CONSTRAINT "fk_group_members_group" FOREIGN KEY ("group_id") REFERENCES "public"."student_groups"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "fk_group_members_student" FOREIGN KEY ("student_id") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "fk_group_members_student" FOREIGN KEY ("student_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ============================================================================

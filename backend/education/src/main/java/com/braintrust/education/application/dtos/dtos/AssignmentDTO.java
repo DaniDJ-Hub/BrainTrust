@@ -23,5 +23,6 @@ public record AssignmentDTO(
         String submissionFormat,
         List<DocumentDTO> attachments,
         List<String> links,
-        String studentSubmissionStatus
+        String studentSubmissionStatus,
+        boolean allowLateSubmissions
 ) {}

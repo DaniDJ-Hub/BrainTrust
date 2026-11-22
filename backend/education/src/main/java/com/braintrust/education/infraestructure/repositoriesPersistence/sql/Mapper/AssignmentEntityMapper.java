@@ -48,6 +48,7 @@ public class AssignmentEntityMapper {
             entity.setActive(domain.isActive());
             entity.setTargetType(domain.getTargetType().name());
             entity.setSubmissionFormat(domain.getSubmissionFormat().name());
+            entity.setAllowLateSubmissions(domain.isAllowLateSubmissions());
             // DO NOT touch documents or links here  handled by syncDocuments/syncLinks
 
         // Use syncDocuments/syncLinks  mutates the SAME collection Hibernate tracks
@@ -94,6 +95,7 @@ public class AssignmentEntityMapper {
             entity.setActive(assignment.isActive());
             entity.setTargetType(assignment.getTargetType().name());
             entity.setSubmissionFormat(assignment.getSubmissionFormat().name());
+            entity.setAllowLateSubmissions(assignment.isAllowLateSubmissions());
 
             // Build the desired name+path pairs from the domain object
             List<String[]> desiredDocs = assignment.getAttachments().stream()
@@ -122,6 +124,7 @@ public class AssignmentEntityMapper {
                     assignment.getTargetType().name(),
                     assignment.getSubmissionFormat().name()
             );
+            entity.setAllowLateSubmissions(assignment.isAllowLateSubmissions());
 
             List<DocumentJpaEntity> documentEntities = assignment.getAttachments().stream()
                     .map(doc -> {
@@ -179,7 +182,7 @@ public class AssignmentEntityMapper {
             submissionFormat = SubmissionFormat.DIGITAL;
         }
 
-        return Assignment.reconstitute(
+        Assignment assignment = Assignment.reconstitute(
                 id, courseId, unitId,
                 entity.getTitle(),
                 entity.getDescription(),
@@ -194,6 +197,8 @@ public class AssignmentEntityMapper {
                 targetType,
                 submissionFormat
         );
+        assignment.setAllowLateSubmissions(entity.isAllowLateSubmissions());
+        return assignment;
     }
 
     private Document toDomainDocument(DocumentJpaEntity entity) {

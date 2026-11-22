@@ -44,7 +44,7 @@ public class TeamSubmissionHelper {
                         memberId,
                         mainSubmission.getContent(),
                         mainSubmission.getAttachments(),
-                        SubmissionStatus.SUBMITTED,
+                        mainSubmission.getStatus(),
                         teamId
                 );
 
@@ -67,8 +67,6 @@ public class TeamSubmissionHelper {
             throw new IllegalStateException("This assignment is not configured for teams");
         }
 
-        if (!assignment.canAcceptSubmissions()) {
-            throw new IllegalStateException("Assignment is closed and cannot accept submissions");
-        }
+        assignment.ensureCanAcceptSubmissions();
     }
 }

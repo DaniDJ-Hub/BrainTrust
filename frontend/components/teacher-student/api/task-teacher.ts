@@ -40,6 +40,7 @@ export interface AssignmentDTO {
   createdAt: string;
   active: boolean;
   availableNow: boolean;
+  allowLateSubmissions?: boolean;
 }
 
 export interface DocumentDTO {
@@ -67,6 +68,8 @@ export interface UpdateAssignmentCommand {
   description: string;
   instructions: string;
   submissionFormat: submissionFormat;
+  maxPoints?: number;
+  allowLateSubmissions?: boolean;
 }
 
 interface FrontendDocumentDTO {
@@ -86,6 +89,7 @@ interface CreateAssignmentFrontendDTO {
   links?: string[];
   targetType: string;
   submissionFormat: string;
+  allowLateSubmissions: boolean;
 }
 
 async function mapAssignmentFromBackend(dto: AssignmentDTO): Promise<Assignment> {
@@ -105,7 +109,7 @@ async function mapAssignmentFromBackend(dto: AssignmentDTO): Promise<Assignment>
     maxScore: { value: 0, maxPoints: dto.maxPoints || 100 },
     instructions: dto.instructions || "",
     submissions: [],
-    allowLateSubmissions: true,
+    allowLateSubmissions: dto.allowLateSubmissions ?? true,
     idUser: ""
   };
 }
@@ -120,6 +124,8 @@ async function mapAssignmentToUpdateCommand(
     description: assignmentData.description || "",
     instructions: assignmentData.instructions || "",
     submissionFormat: assignmentData.submissionFormat || "DIGITAL",
+    maxPoints: assignmentData.maxScore?.maxPoints || undefined,
+    allowLateSubmissions: assignmentData.allowLateSubmissions,
   };
 }
 
@@ -255,6 +261,7 @@ export async function createAssignment(
       links: taskData.urls && taskData.urls.length > 0 ? taskData.urls : undefined,
       targetType: taskData.deliveryMode === "TEAM" ? "TEAM" : "INDIVIDUAL",
       submissionFormat: taskData.submissionFormat || "DIGITAL",
+      allowLateSubmissions: taskData.allowLateSubmissions ?? true,
     };
 
     console.log("Frontend DTO to send:", JSON.stringify(frontendDTO, null, 2));
@@ -293,7 +300,14 @@ export async function updateAssignment(
       `/api/assignments/${assignmentId}`,
       command
     );
-    
+
+    if (assignmentData.dueDate) {
+      await apiClient.put<SuccessResponseDTO>(
+        `/api/assignments/${assignmentId}/due-date`,
+        { newDueDate: assignmentData.dueDate }
+      );
+    }
+
     const updatedAssignment = await fetchAssignmentById(assignmentId);
     
     console.log("Backend: Updated assignment:", assignmentId);

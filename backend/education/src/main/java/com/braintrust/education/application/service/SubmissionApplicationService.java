@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -109,7 +110,7 @@ public class SubmissionApplicationService implements SubmissionService {
                     studentId,
                     submissionContent,
                     documents,
-                    SubmissionStatus.SUBMITTED
+                    assignment.determineSubmissionStatus()
             );
 
             Submission savedSubmission = submissionRepository.save(submission);
@@ -123,6 +124,8 @@ public class SubmissionApplicationService implements SubmissionService {
 
             return savedSubmission.getId();
 
+        } catch (IllegalStateException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to submit assignment studentId={}: {}", studentId.getValue(), e.getMessage(), e);
             throw new RuntimeException("Failed to submit assignment", e);
@@ -141,6 +144,8 @@ public class SubmissionApplicationService implements SubmissionService {
             Assignment assignment = findAssignmentOrThrow(assignmentId);
             SubmissionFormat submissionFormat = assignment.getSubmissionFormat();
 
+            validateAssignmentCanAcceptSubmissions(assignment);
+
             String combinedExtractedText = submissionProcessor.combineExtractedTexts(command.frontendDocuments());
             List<Document> documents = submissionProcessor.storeFrontendDocuments(
                     assignmentId.getValue(),
@@ -154,7 +159,7 @@ public class SubmissionApplicationService implements SubmissionService {
                     studentId,
                     submissionContent,
                     documents,
-                    SubmissionStatus.SUBMITTED
+                    assignment.determineSubmissionStatus()
             );
 
             Submission savedSubmission = submissionRepository.save(submission);
@@ -166,6 +171,8 @@ public class SubmissionApplicationService implements SubmissionService {
 
             return savedSubmission.getId();
 
+        } catch (IllegalStateException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Frontend submission failed: {}", e.getMessage(), e);
             throw new RuntimeException("Frontend extraction submission failed", e);
@@ -214,7 +221,7 @@ public class SubmissionApplicationService implements SubmissionService {
                     senderId,
                     submissionContent,
                     documents,
-                    SubmissionStatus.SUBMITTED,
+                    assignment.determineSubmissionStatus(),
                     teamId
             );
 
@@ -229,6 +236,8 @@ public class SubmissionApplicationService implements SubmissionService {
 
             return savedSubmission.getId();
 
+        } catch (IllegalStateException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to submit team assignment groupId={}: {}", command.groupId(), e.getMessage(), e);
             throw new RuntimeException("Failed to submit team assignment", e);
@@ -265,7 +274,7 @@ public class SubmissionApplicationService implements SubmissionService {
                     senderId,
                     submissionContent,
                     documents,
-                    SubmissionStatus.SUBMITTED,
+                    assignment.determineSubmissionStatus(),
                     teamId
             );
 
@@ -280,6 +289,8 @@ public class SubmissionApplicationService implements SubmissionService {
 
             return savedSubmission.getId();
 
+        } catch (IllegalStateException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Team frontend submission failed: {}", e.getMessage(), e);
             throw new RuntimeException("Team frontend extraction submission failed", e);
@@ -446,8 +457,11 @@ public class SubmissionApplicationService implements SubmissionService {
 
     private void validateAssignmentCanAcceptSubmissions(Assignment assignment) {
         if (!assignment.canAcceptSubmissions()) {
-            throw new IllegalStateException("Assignment is closed and cannot accept submissions");
+            log.warn("Submission rejected assignmentId={} dueDate={} now={} allowLate={} active={}",
+                    assignment.getId().getValue(), assignment.getDueDate(), LocalDateTime.now(),
+                    assignment.isAllowLateSubmissions(), assignment.isActive());
         }
+        assignment.ensureCanAcceptSubmissions();
     }
 
     @Override
