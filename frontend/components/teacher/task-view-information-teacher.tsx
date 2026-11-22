@@ -824,7 +824,7 @@ export function VistaInfoTarea({ assignment, onClose }: PropsVistaInfoTarea) {
                       className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border hover:bg-muted/50 transition-colors group"
                     >
                       <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <LinkIcon className="h-4 w-4 text-accent flex-shrink-0" />
+                        <LinkIcon className="h-4 w-4 text-highlight flex-shrink-0" />
                         <div className="min-w-0 flex-1">
                           <a
                             href={url}

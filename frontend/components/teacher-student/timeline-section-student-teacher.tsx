@@ -446,7 +446,7 @@ export function TimelineSection({ userId, userType }: PropsSeccionLineaTiempo) {
                     urgenciaItem === "urgent"
                       ? "border-destructive/30 bg-destructive/5 hover:border-destructive/50"
                       : urgenciaItem === "warning"
-                      ? "border-accent/40 bg-accent/5 hover:border-accent/60"
+                      ? "border-highlight/40 bg-highlight/5 hover:border-highlight/60"
                       : "border-border bg-card hover:border-primary/30"
                   )}
                   onClick={() => handleVerDetalles(item)}
@@ -458,7 +458,7 @@ export function TimelineSection({ userId, userType }: PropsSeccionLineaTiempo) {
                         urgenciaItem === "urgent"
                           ? "bg-destructive/10 text-destructive"
                           : urgenciaItem === "warning"
-                          ? "bg-accent/10 text-accent-foreground"
+                          ? "bg-highlight/10 text-highlight-foreground"
                           : esTareaGrupal
                           ? "bg-secondary text-secondary-foreground"
                           : "bg-muted text-muted-foreground"

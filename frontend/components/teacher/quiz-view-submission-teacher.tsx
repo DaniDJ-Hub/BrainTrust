@@ -265,18 +265,18 @@ return (
     </div>
 
     {estaCalificado && calificacionExistente?.value && (
-      <Card className="p-4 bg-accent/10 border-2 border-accent/30">
+      <Card className="p-4 bg-highlight/10 border-2 border-highlight/30">
         <div className="flex items-start gap-3">
-          <AlertCircle className="h-6 w-6 text-accent-foreground flex-shrink-0 mt-0.5" />
+          <AlertCircle className="h-6 w-6 text-highlight-foreground flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <h3 className="font-semibold text-accent-foreground text-base sm:text-lg">
+            <h3 className="font-semibold text-highlight-foreground text-base sm:text-lg">
               Esta entrega ya ha sido calificada
             </h3>
             <div className="mt-2 space-y-1 text-sm">
-              <p className="text-accent-foreground/90">
+              <p className="text-highlight-foreground/90">
                 <strong>Calificación Actual:</strong> {calificacionExistente.value} / {calificacionExistente.maxScore} ({calificacionExistente.percentage}%)
               </p>
-              <p className="text-xs text-accent-foreground/75 mt-2">
+              <p className="text-xs text-highlight-foreground/75 mt-2">
                 Puedes modificar las calificaciones a continuación. La calificación existente se conservará hasta que guardes los cambios.
               </p>
             </div>
@@ -366,7 +366,7 @@ return (
                       <span
                         className={
                           ponderadoObtenido >= vpp * 0.7
-                            ? "text-accent font-semibold"
+                            ? "text-highlight font-semibold"
                             : "text-destructive font-semibold"
                         }
                       >
@@ -476,9 +476,9 @@ return (
                       <Badge variant="outline" className="text-xs">Auto-calificado</Badge>
                     )}
                     {esRespuestaAbierta && !respuestasCoincidenNormalizadas ? (
-                      <AlertCircle className="h-4 w-4 text-accent-foreground" />
+                      <AlertCircle className="h-4 w-4 text-highlight-foreground" />
                     ) : pregunta.isCorrect ? (
-                      <CheckCircle className="h-4 w-4 text-accent" />
+                      <CheckCircle className="h-4 w-4 text-highlight" />
                     ) : (
                       <XCircle className="h-4 w-4 text-destructive" />
                     )}
@@ -504,22 +504,22 @@ return (
                             key={indiceOpcion}
                             className={`p-2 sm:p-3 rounded-lg border-2 ${
                               esRespuestaEstudianteCorrecta
-                                ? "bg-accent/10 border-accent/50"
+                                ? "bg-highlight/10 border-highlight/50"
                                 : esRespuestaEstudianteIncorrecta
                                 ? "bg-destructive/10 border-destructive/50"
                                 : esCorrectaPeroNoSeleccionada
-                                ? "bg-accent/5 border-accent/30"
+                                ? "bg-highlight/5 border-highlight/30"
                                 : "bg-muted/30 border-border"
                             }`}
                           >
                             <div className="flex items-start gap-3">
                               <div className="flex-shrink-0 mt-0.5">
                                 {esRespuestaEstudianteCorrecta ? (
-                                  <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
+                                  <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-highlight" />
                                 ) : esRespuestaEstudianteIncorrecta ? (
                                   <XCircle className="h-5 w-5 sm:h-6 sm:w-6 text-destructive" />
                                 ) : esCorrectaPeroNoSeleccionada ? (
-                                  <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-accent-foreground" />
+                                  <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-highlight-foreground" />
                                 ) : (
                                   <Circle className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
                                 )}
@@ -534,7 +534,7 @@ return (
                                       variant="outline"
                                       className={`text-xs ${
                                         esOpcionCorrecta
-                                          ? "border-accent text-accent bg-accent/10"
+                                          ? "border-highlight text-highlight bg-highlight/10"
                                           : "border-destructive text-destructive bg-destructive/10"
                                       }`}
                                     >
@@ -545,7 +545,7 @@ return (
                                     <Badge
                                       className={`text-xs ${
                                         estaSeleccionada
-                                          ? "bg-accent text-accent-foreground"
+                                          ? "bg-highlight text-highlight-foreground"
                                           : "bg-primary text-primary-foreground"
                                       }`}
                                     >
@@ -570,7 +570,7 @@ return (
                           readOnly
                           className={`min-h-[80px] sm:min-h-[100px] text-sm ${
                             respuestasCoincidenNormalizadas
-                              ? "bg-accent/10 border-accent/50"
+                              ? "bg-highlight/10 border-highlight/50"
                               : ""
                           }`}
                         />
@@ -681,14 +681,14 @@ return (
             </div>
 
             {hayCambioCalificacion && (
-              <div className="p-3 bg-accent/10 rounded-lg border border-accent/30">
+              <div className="p-3 bg-highlight/10 rounded-lg border border-highlight/30">
                 <div className="flex items-start gap-2">
-                  <AlertCircle className="h-5 w-5 text-accent-foreground flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="h-5 w-5 text-highlight-foreground flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-xs sm:text-sm text-accent-foreground font-semibold">
+                    <p className="text-xs sm:text-sm text-highlight-foreground font-semibold">
                       La calificación será actualizada
                     </p>
-                    <p className="text-xs text-accent-foreground/75 mt-1">
+                    <p className="text-xs text-highlight-foreground/75 mt-1">
                       Anterior: {calificacionExistente?.value} → Nueva: {calificacionFinalPonderada}
                     </p>
                   </div>

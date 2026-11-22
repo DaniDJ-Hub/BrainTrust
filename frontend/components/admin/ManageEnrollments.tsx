@@ -274,7 +274,7 @@ return (
                         enrollment.status === 'ACTIVE'
                           ? 'bg-primary/10 text-primary'
                           : enrollment.status === 'COMPLETED'
-                          ? 'bg-accent/20 text-accent-foreground'
+                          ? 'bg-highlight/20 text-highlight-foreground'
                           : 'bg-muted text-muted-foreground'
                       }`}>
                         {enrollment.status === 'ACTIVE' ? 'ACTIVO' : enrollment.status === 'COMPLETED' ? 'COMPLETADO' : enrollment.status}

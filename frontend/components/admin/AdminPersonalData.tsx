@@ -559,7 +559,7 @@ function UserDetailModal({ user, open, onClose }: UserDetailModalProps) {
                 <MapPin className="h-3.5 w-3.5" />
                 Dirección
               </h4>
-              <div className="bg-accent/10 border border-accent/30 rounded-2xl px-4 py-4 text-sm space-y-1">
+              <div className="bg-highlight/10 border border-highlight/30 rounded-2xl px-4 py-4 text-sm space-y-1">
                 <p className="font-medium text-foreground">{user.person.address.street}</p>
                 <p className="text-muted-foreground">
                   Col. {user.person.address.colony},{" "}

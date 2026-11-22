@@ -208,8 +208,8 @@ return (
                   {grades?.filter((g) => g.finalGrade !== null).length || 0}
                 </p>
               </div>
-              <div className="bg-accent/10 border border-accent/20 rounded-2xl p-4">
-                <p className="text-xs font-semibold text-accent-foreground uppercase tracking-wider mb-1">Pendientes</p>
+              <div className="bg-highlight/10 border border-highlight/20 rounded-2xl p-4">
+                <p className="text-xs font-semibold text-highlight-foreground uppercase tracking-wider mb-1">Pendientes</p>
                 <p className="text-2xl font-bold text-foreground">
                   {grades?.filter((g) => g.finalGrade === null).length || 0}
                 </p>

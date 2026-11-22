@@ -136,8 +136,8 @@ return (
               {unitGrades?.filter((g) => g.finalGrade && g.finalGrade !== 'N/A').length || 0}
             </p>
           </div>
-          <div className="bg-accent/10 border border-accent/20 rounded-2xl p-4">
-            <p className="text-xs font-semibold text-accent-foreground uppercase tracking-wider mb-1">Pendientes</p>
+          <div className="bg-highlight/10 border border-highlight/20 rounded-2xl p-4">
+            <p className="text-xs font-semibold text-highlight-foreground uppercase tracking-wider mb-1">Pendientes</p>
             <p className="text-2xl font-bold text-foreground">
               {unitGrades?.filter((g) => !g.finalGrade || g.finalGrade === 'N/A').length || 0}
             </p>
@@ -287,7 +287,7 @@ return (
                                 {Object.entries(unitGrade.quizGrades).map(([key, grade]: [string, any]) => (
                                   <span
                                     key={key}
-                                    className="px-2 py-1 bg-accent/20 text-accent-foreground rounded-lg text-xs font-medium"
+                                    className="px-2 py-1 bg-highlight/20 text-highlight-foreground rounded-lg text-xs font-medium"
                                   >
                                     {key}: {grade.value || grade.percentage || 'N/A'}
                                   </span>

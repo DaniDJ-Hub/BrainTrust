@@ -521,7 +521,7 @@ return (
             <div className="text-sm text-muted-foreground">Tareas</div>
           </Card>
           <Card className="p-4 text-center border border-border">
-            <div className="text-2xl font-bold text-accent">
+            <div className="text-2xl font-bold text-highlight">
               {quizzes.length}
             </div>
             <div className="text-sm text-muted-foreground">Quizzes</div>
@@ -572,7 +572,7 @@ return (
             <span>Tarea Grupal</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-accent/20 border border-accent/30 rounded"></div>
+            <div className="w-3 h-3 bg-highlight/20 border border-highlight/30 rounded"></div>
             <span>Quiz</span>
           </div>
           {userType === "student" && (

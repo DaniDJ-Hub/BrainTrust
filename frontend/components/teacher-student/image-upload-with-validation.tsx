@@ -188,7 +188,7 @@ return (
           </div>
 
           {estadoValidacion === "valid" && (
-            <div className="absolute top-2 right-2 bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+            <div className="absolute top-2 right-2 bg-highlight text-highlight-foreground px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
               <Check className="h-3 w-3" />
               Imagen Verificada
             </div>

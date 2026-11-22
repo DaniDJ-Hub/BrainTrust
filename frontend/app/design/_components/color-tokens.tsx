@@ -10,14 +10,19 @@ interface SwatchGroup {
 }
 
 const SWATCH_GROUPS: SwatchGroup[] = [
-  { label: "Superficies", tokens: ["--background", "--card", "--popover", "--muted", "--secondary"] },
+  { label: "Superficies (60%)", tokens: ["--background", "--card", "--popover", "--muted", "--accent"] },
   { label: "Texto", tokens: ["--foreground", "--muted-foreground", "--secondary-foreground"] },
-  { label: "Marca y acento", tokens: ["--primary", "--primary-foreground", "--accent", "--accent-foreground", "--ring"] },
-  { label: "Estado", tokens: ["--destructive", "--destructive-foreground"] },
-  { label: "Bordes", tokens: ["--border", "--input"] },
+  { label: "Marca navy (30%)", tokens: ["--primary", "--primary-hover", "--primary-active", "--secondary", "--ring"] },
+  { label: "Highlight dorado (10%)", tokens: ["--highlight", "--highlight-foreground", "--highlight-soft", "--highlight-soft-foreground"] },
+  { label: "Semánticos sólidos", tokens: ["--success", "--warning", "--info", "--destructive"] },
+  { label: "Semánticos suaves", tokens: ["--success-soft", "--warning-soft", "--info-soft", "--destructive-soft"] },
+  { label: "Bordes", tokens: ["--border", "--border-strong", "--input"] },
   { label: "Sidebar", tokens: ["--sidebar", "--sidebar-foreground", "--sidebar-primary", "--sidebar-primary-foreground", "--sidebar-accent", "--sidebar-border"] },
   { label: "Gráficas", tokens: ["--chart-1", "--chart-2", "--chart-3", "--chart-4", "--chart-5"] },
 ]
+
+const SCALE_STEPS = [100, 200, 300, 400, 500, 600, 700, 800, 900]
+const SCALES = ["neutral", "navy", "gold"]
 
 interface ContrastCheck extends ContrastPair {
   label: string
@@ -30,9 +35,19 @@ const CONTRAST_CHECKS: ContrastCheck[] = [
   { label: "Texto secundario en card", fg: "--muted-foreground", bg: "--card", min: 4.5 },
   { label: "Texto secundario en muted", fg: "--muted-foreground", bg: "--muted", min: 4.5 },
   { label: "Botón primario", fg: "--primary-foreground", bg: "--primary", min: 4.5 },
-  { label: "Acento (texto sobre acento)", fg: "--accent-foreground", bg: "--accent", min: 4.5 },
+  { label: "Botón primario (hover)", fg: "--primary-foreground", bg: "--primary-hover", min: 4.5 },
+  { label: "Hover neutro (accent)", fg: "--accent-foreground", bg: "--accent", min: 4.5 },
+  { label: "Botón highlight", fg: "--highlight-foreground", bg: "--highlight", min: 4.5 },
+  { label: "Badge highlight", fg: "--highlight-soft-foreground", bg: "--highlight-soft", min: 4.5 },
   { label: "Botón destructivo", fg: "--destructive-foreground", bg: "--destructive", min: 4.5 },
   { label: "Texto destructivo en card", fg: "--destructive", bg: "--card", min: 4.5 },
+  { label: "Texto éxito en card", fg: "--success", bg: "--card", min: 4.5 },
+  { label: "Texto aviso en card", fg: "--warning", bg: "--card", min: 4.5 },
+  { label: "Texto info en card", fg: "--info", bg: "--card", min: 4.5 },
+  { label: "Badge éxito", fg: "--success-soft-foreground", bg: "--success-soft", min: 4.5 },
+  { label: "Badge aviso", fg: "--warning-soft-foreground", bg: "--warning-soft", min: 4.5 },
+  { label: "Badge info", fg: "--info-soft-foreground", bg: "--info-soft", min: 4.5 },
+  { label: "Badge error", fg: "--destructive-soft-foreground", bg: "--destructive-soft", min: 4.5 },
   { label: "Anillo de foco sobre card", fg: "--ring", bg: "--card", min: 3 },
   { label: "Borde de input sobre card", fg: "--input", bg: "--card", min: 3 },
   { label: "Sidebar: texto", fg: "--sidebar-foreground", bg: "--sidebar", min: 4.5 },
@@ -56,6 +71,28 @@ export function ColorTokens({ themeKey }: ColorTokensProps) {
       title="Color"
       description="Valores resueltos en el navegador para el tema activo. Cambia de tema para comparar."
     >
+      <ShowcaseGroup label="Escalas 100–900 (misma progresión de luminosidad)">
+        <div className="space-y-3">
+          {SCALES.map((scale) => (
+            <div key={scale} className="flex items-center gap-3">
+              <span className="w-16 shrink-0 text-caption text-muted-foreground font-mono">{scale}</span>
+              <ul className="grid flex-1 grid-cols-9 gap-1">
+                {SCALE_STEPS.map((step) => (
+                  <li key={step} className="space-y-1">
+                    <div
+                      className="h-10 rounded-tag"
+                      style={{ background: `var(--${scale}-${step})` }}
+                      aria-hidden="true"
+                    />
+                    <p className="text-center text-caption text-muted-foreground font-mono">{step}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </ShowcaseGroup>
+
       <div className="grid gap-4 md:grid-cols-2">
         {SWATCH_GROUPS.map((group) => (
           <ShowcaseGroup key={group.label} label={group.label}>

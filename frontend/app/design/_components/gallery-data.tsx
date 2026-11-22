@@ -10,7 +10,7 @@ import { ShowcaseGroup, ShowcaseSection } from "./showcase-section"
 
 const SAMPLE_ROWS = [
   { name: "Ana López Ruiz", task: "Ensayo unidad 2", date: "12 mar", status: "badge-success", label: "Entregado", grade: "95.0" },
-  { name: "Carlos Méndez", task: "Ensayo unidad 2", date: "13 mar", status: "badge-accent", label: "Tarde", grade: "80.0" },
+  { name: "Carlos Méndez", task: "Ensayo unidad 2", date: "13 mar", status: "badge-warning", label: "Tarde", grade: "80.0" },
   { name: "Lucía Herrera", task: "Ensayo unidad 2", date: "—", status: "badge-destructive", label: "Sin entregar", grade: "—" },
 ]
 

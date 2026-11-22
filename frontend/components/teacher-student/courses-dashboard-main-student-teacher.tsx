@@ -163,7 +163,7 @@ return (
             </p>
           </div>
           <div className="absolute top-2 right-2 flex gap-2">
-            <span className="text-xs font-bold px-2 py-1 rounded-full bg-accent text-accent-foreground shadow-lg uppercase flex items-center gap-1">
+            <span className="text-xs font-bold px-2 py-1 rounded-full bg-highlight text-highlight-foreground shadow-lg uppercase flex items-center gap-1">
               <GraduationCap className="h-3 w-3" />{" "}
               {course.grade + " - " + course.group}
             </span>
@@ -230,7 +230,7 @@ return (
                 <Button
                   variant="outline"
                   size="icon"
-                  className="text-accent border-accent/30 hover:bg-accent/10"
+                  className="text-highlight border-highlight/30 hover:bg-highlight/10"
                   onClick={() => handleActualizarCurso(course.id)}
                 >
                   <Edit className="h-4 w-4" />
@@ -265,7 +265,7 @@ return (
         {!esEstudiante && (
           <Button
             onClick={handleCrearCurso}
-            className="bg-accent hover:bg-accent/90 text-accent-foreground gap-2 shadow-md"
+            className="bg-highlight hover:bg-highlight/90 text-highlight-foreground gap-2 shadow-md"
             disabled={crearCurso.isPending}
           >
             <Plus className="h-4 w-4" />

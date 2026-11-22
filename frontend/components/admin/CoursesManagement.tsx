@@ -176,8 +176,8 @@ return (
 
     <div className="bg-card rounded-2xl border border-border p-4 shadow-sm">
       <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center flex-shrink-0">
-          <Clock className="h-5 w-5 text-accent-foreground" />
+        <div className="h-10 w-10 rounded-xl bg-highlight flex items-center justify-center flex-shrink-0">
+          <Clock className="h-5 w-5 text-highlight-foreground" />
         </div>
         <div>
           <p className="text-xs text-muted-foreground">Borradores</p>
@@ -200,8 +200,8 @@ return (
 
     <div className="bg-card rounded-2xl border border-border p-4 shadow-sm">
       <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-xl bg-accent/80 flex items-center justify-center flex-shrink-0">
-          <TrendingUp className="h-5 w-5 text-accent-foreground" />
+        <div className="h-10 w-10 rounded-xl bg-highlight/80 flex items-center justify-center flex-shrink-0">
+          <TrendingUp className="h-5 w-5 text-highlight-foreground" />
         </div>
         <div>
           <p className="text-xs text-muted-foreground">Ocupación</p>

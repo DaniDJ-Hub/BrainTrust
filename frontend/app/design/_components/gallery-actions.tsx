@@ -7,15 +7,23 @@ const BUTTON_VARIANTS = ["default", "secondary", "outline", "ghost", "destructiv
 const BUTTON_SIZES = ["sm", "default", "lg"] as const
 const BADGE_VARIANTS = ["default", "secondary", "outline", "destructive"] as const
 
-const UTILITY_BUTTONS = ["btn-primary", "btn-ghost", "btn-accent", "btn-destructive"]
-const UTILITY_BADGES = ["badge-primary", "badge-accent", "badge-muted", "badge-success", "badge-destructive"]
+const UTILITY_BUTTONS = ["btn-primary", "btn-secondary", "btn-quiet", "btn-highlight", "btn-destructive"]
+const UTILITY_BADGES = [
+  { cls: "badge-success", label: "Entregado" },
+  { cls: "badge-warning", label: "Tarde" },
+  { cls: "badge-destructive", label: "Sin entregar" },
+  { cls: "badge-info", label: "Calificado" },
+  { cls: "badge-muted", label: "Borrador" },
+  { cls: "badge-primary", label: "Obligatorio" },
+  { cls: "badge-highlight", label: "Nuevo" },
+]
 
 export function GalleryActions() {
   return (
     <ShowcaseSection
       id="acciones"
       title="Botones y badges"
-      description="Conviven dos sistemas: el Button de shadcn y las clases btn-*. Pasa el cursor y usa Tab para revisar hover y foco."
+      description="Button de shadcn (sin modificar) y clases btn-* ya alineadas a los tokens. Pasa el cursor y usa Tab para revisar hover y foco."
     >
       <ShowcaseGroup label="Button (shadcn) · variantes × tamaños">
         <div className="space-y-3">
@@ -52,21 +60,34 @@ export function GalleryActions() {
         </ShowcaseGroup>
 
         <ShowcaseGroup label="Clases utilitarias btn-* / icon-btn">
-          <div className="flex flex-wrap items-center gap-3">
-            {UTILITY_BUTTONS.map((cls) => (
-              <button key={cls} type="button" className={cls}>
-                {cls}
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-3">
+              {UTILITY_BUTTONS.map((cls) => (
+                <button key={cls} type="button" className={cls}>
+                  {cls}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="button" className="btn-primary btn-sm">btn-sm</button>
+              <button type="button" className="btn-primary">40px</button>
+              <button type="button" className="btn-primary btn-lg">btn-lg</button>
+              <button type="button" className="btn-primary" disabled>Deshabilitado</button>
+              <button type="button" className="btn-primary" aria-busy="true">
+                <Loader2 className="h-4 w-4 animate-spin" /> Guardando…
               </button>
-            ))}
-            <button type="button" className="btn-primary" disabled>
-              disabled
-            </button>
-            <button type="button" className="icon-btn" aria-label="Agregar">
-              <Plus className="h-4 w-4" />
-            </button>
-            <button type="button" className="icon-btn-destructive" aria-label="Eliminar">
-              <Trash2 className="h-4 w-4" />
-            </button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button type="button" className="icon-btn" aria-label="Agregar">
+                <Plus className="h-4 w-4" />
+              </button>
+              <button type="button" className="icon-btn-primary" aria-label="Editar">
+                <Pencil className="h-4 w-4" />
+              </button>
+              <button type="button" className="icon-btn-destructive" aria-label="Eliminar">
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </ShowcaseGroup>
       </div>
@@ -81,14 +102,15 @@ export function GalleryActions() {
             ))}
           </div>
         </ShowcaseGroup>
-        <ShowcaseGroup label="Clases badge-*">
-          <div className="flex flex-wrap gap-2">
-            {UTILITY_BADGES.map((cls) => (
-              <span key={cls} className={cls}>
-                {cls}
-              </span>
+        <ShowcaseGroup label="Clases badge-* · estados del LMS">
+          <ul className="flex flex-wrap gap-3">
+            {UTILITY_BADGES.map((b) => (
+              <li key={b.cls} className="flex flex-col items-start gap-1">
+                <span className={b.cls}>{b.label}</span>
+                <span className="text-caption text-muted-foreground font-mono">{b.cls}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </ShowcaseGroup>
       </div>
     </ShowcaseSection>

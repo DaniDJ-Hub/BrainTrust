@@ -306,7 +306,7 @@ return (
               <Input
                 value={datosEdicion.title}
                 onChange={(e) => setDatosEdicion(prev => ({ ...prev, title: e.target.value }))}
-                className="text-3xl md:text-4xl font-bold mb-2 border-border bg-background text-foreground focus-visible:ring-accent"
+                className="text-3xl md:text-4xl font-bold mb-2 border-border bg-background text-foreground focus-visible:ring-highlight"
               />
             ) : (
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
@@ -387,7 +387,7 @@ return (
                   value={datosEdicion.sectionContent}
                   onChange={(e) => setDatosEdicion(prev => ({ ...prev, sectionContent: e.target.value }))}
                   rows={12}
-                  className="w-full font-mono text-sm border-border bg-background text-foreground focus-visible:ring-accent"
+                  className="w-full font-mono text-sm border-border bg-background text-foreground focus-visible:ring-highlight"
                 />
               ) : (
                 <div className="prose dark:prose-invert max-w-none">
@@ -624,7 +624,7 @@ return (
                     value={nuevaUrl}
                     onChange={(e) => setNuevaUrl(e.target.value)}
                     placeholder="https://ejemplo.com"
-                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-accent"
+                    className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-highlight"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") { e.preventDefault(); handleAgregarUrl(); }
                     }}
@@ -658,7 +658,7 @@ return (
                       value={entradaUrl}
                       onChange={(e) => setEntradaUrl(e.target.value)}
                       placeholder="https://ejemplo.com"
-                      className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-accent"
+                      className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-highlight"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") { e.preventDefault(); handleAgregarUrlALista(); }
                       }}
@@ -732,7 +732,7 @@ return (
                       className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg border border-border hover:bg-secondary/60 transition-colors group"
                     >
                       <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <LinkIcon className="h-4 w-4 text-accent shrink-0" />
+                        <LinkIcon className="h-4 w-4 text-highlight shrink-0" />
                         <div className="min-w-0 flex-1">
                           <a
                             href={url}

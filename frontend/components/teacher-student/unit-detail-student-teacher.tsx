@@ -544,7 +544,7 @@ return (
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver al Curso
           </Button>
-          <Badge variant="secondary" className="bg-secondary text-foreground text-sm bg-amber-50 border border-border  dark:bg-amber-50 dark:text-accent-foreground ">
+          <Badge variant="secondary" className="bg-secondary text-foreground text-sm bg-amber-50 border border-border  dark:bg-amber-50 dark:text-highlight-foreground ">
             {recursos.length}{" "}
             {recursos.length === 1 ? "recurso" : "recursos"}
           </Badge>
@@ -657,7 +657,7 @@ return (
 
               <div className="text-center space-y-4 max-w-2xl mx-auto">
                 <div className="flex items-center justify-center gap-2 flex-wrap">
-                  <Badge className="bg-accent/10 text-foreground border border-accent/20 text-sm bg-amber-50 dark:text-white dark:bg-black">
+                  <Badge className="bg-highlight/10 text-foreground border border-highlight/20 text-sm bg-amber-50 dark:text-white dark:bg-black">
                     {tipoRecursoActual === "ASSIGNMENT" ? "TAREA" : tipoRecursoActual === "QUIZ" ? "QUIZ" : "PÁGINA"}
                   </Badge>
                   {esTareaGrupal && (
@@ -794,7 +794,7 @@ return (
                     onClick={() => setIndiceRecursoActual(indice)}
                     className={`h-3 rounded-full transition-all ${
                       indice === indiceRecursoActual
-                        ? "w-8 bg-accent"
+                        ? "w-8 bg-highlight"
                         : "w-3 bg-border"
                     }`}
                   />

@@ -62,7 +62,7 @@ return (
               >
                 <p className="font-semibold text-sm mb-2 text-foreground">
                   Segmento {indice + 1}:{" "}
-                  <span className="text-accent font-bold">
+                  <span className="text-highlight font-bold">
                     {Math.round(parseFloat(segmento.probability) * 100)}%
                   </span>{" "}
                   Probabilidad IA

@@ -39,7 +39,7 @@ export function DesignShowcase() {
           </Button>
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-lg font-semibold text-foreground tracking-tight">Design system</h1>
-            <p className="text-xs text-muted-foreground">BrainTrust · Navy &amp; Gold · Fase 0 (línea base)</p>
+            <p className="text-xs text-muted-foreground">BrainTrust · Navy &amp; Gold · Fase 1 (tokens)</p>
           </div>
           <Button
             variant="outline"

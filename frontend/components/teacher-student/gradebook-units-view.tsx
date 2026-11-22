@@ -170,7 +170,7 @@ return (
           placeholder="Buscar unidades..."
           value={terminoBusqueda}
           onChange={(e) => setTerminoBusqueda(e.target.value)}
-          className="pl-10 border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-accent"
+          className="pl-10 border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-highlight"
         />
       </div>
     </div>
@@ -198,7 +198,7 @@ return (
                 <CardDescription className="text-muted-foreground">{unidad.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-xs text-accent font-medium text-center pt-2 border-t border-border">
+                <div className="text-xs text-highlight font-medium text-center pt-2 border-t border-border">
                   Haz clic para ver el desglose detallado de calificaciones
                 </div>
               </CardContent>
@@ -244,10 +244,10 @@ return (
                         <span>Ver calificaciones de estudiantes</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <CheckCircle className="h-4 w-4 text-accent" />
+                        <CheckCircle className="h-4 w-4 text-highlight" />
                         <span>Asignar calificaciones finales</span>
                       </div>
-                      <div className="text-xs text-accent font-medium text-center pt-2 border-t border-border">
+                      <div className="text-xs text-highlight font-medium text-center pt-2 border-t border-border">
                         Haz clic para gestionar calificaciones de esta unidad
                       </div>
                     </div>
@@ -284,7 +284,7 @@ return (
                       <TableCell>
                         <Badge
                           variant="secondary"
-                          className="text-base font-semibold bg-accent/10 text-accent-foreground border border-accent/20"
+                          className="text-base font-semibold bg-highlight/10 text-highlight-foreground border border-highlight/20"
                         >
                           {libroCalificaciones.finalGrade || 'N/A'}
                         </Badge>
@@ -333,7 +333,7 @@ return (
                                   value={valorCalificacion}
                                   onChange={(e) => setValorCalificacion(e.target.value)}
                                   placeholder="ej., 90"
-                                  className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-accent"
+                                  className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-highlight"
                                 />
                               </div>
                               <div>
@@ -344,7 +344,7 @@ return (
                                   onChange={(e) => setRetroalimentacion(e.target.value)}
                                   placeholder="Retroalimentación opcional"
                                   rows={3}
-                                  className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-accent"
+                                  className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-highlight"
                                 />
                               </div>
                             </div>

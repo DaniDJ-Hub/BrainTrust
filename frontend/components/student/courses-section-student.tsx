@@ -12,8 +12,8 @@ import { useStudentCourses } from "@/app/presentation/hooks/course/student/stude
 const COURSE_PALETTES = [
   { bg: "bg-primary",     text: "text-primary-foreground" },
   { bg: "bg-primary/75",  text: "text-primary-foreground" },
-  { bg: "bg-accent",      text: "text-accent-foreground"  },
-  { bg: "bg-accent/75",   text: "text-accent-foreground"  },
+  { bg: "bg-highlight",      text: "text-highlight-foreground"  },
+  { bg: "bg-highlight/75",   text: "text-highlight-foreground"  },
   { bg: "bg-primary/55",  text: "text-primary-foreground" },
 ] as const;
 

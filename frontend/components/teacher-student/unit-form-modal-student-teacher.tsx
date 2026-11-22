@@ -132,7 +132,7 @@ return (
                 id="name"
                 placeholder="ej., Módulo 1: Introducción a JavaScript"
                 disabled={isSaving}
-                className={`border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-accent ${
+                className={`border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-highlight ${
                   errors.name ? "border-destructive focus-visible:ring-destructive" : ""
                 }`}
               />
@@ -155,7 +155,7 @@ return (
                 placeholder="Describa lo que los estudiantes aprenderán en esta unidad..."
                 rows={4}
                 disabled={isSaving}
-                className={`border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-accent ${
+                className={`border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-highlight ${
                   errors.description ? "border-destructive focus-visible:ring-destructive" : ""
                 }`}
               />
@@ -181,7 +181,7 @@ return (
                   onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
                   min={1}
                   disabled={isSaving}
-                  className={`border-border bg-background text-foreground focus-visible:ring-accent ${
+                  className={`border-border bg-background text-foreground focus-visible:ring-highlight ${
                     errors.numUnity ? "border-destructive focus-visible:ring-destructive" : ""
                   }`}
                 />
