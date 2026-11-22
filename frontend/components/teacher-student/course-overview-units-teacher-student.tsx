@@ -257,7 +257,7 @@ return (
           {!esEstudiante && (
             <Button
               onClick={handleCrearUnidad}
-              className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground"
+              className="gap-2 bg-highlight hover:bg-highlight/90 text-highlight-foreground"
               disabled={crearUnidad.isPending}
             >
               <Plus className="h-4 w-4" />

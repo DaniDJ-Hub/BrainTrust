@@ -12,8 +12,8 @@ import { useCoursesByTeacher } from "@/components/teacher/hooks/courses-hooks"
 const COURSE_PALETTES = [
   { bg: "bg-primary",         text: "text-primary-foreground"  },  // navy / gold
   { bg: "bg-primary/75",      text: "text-primary-foreground"  },  // navy 75%
-  { bg: "bg-accent",          text: "text-accent-foreground"   },  // gold
-  { bg: "bg-accent/75",       text: "text-accent-foreground"   },  // gold 75%
+  { bg: "bg-highlight",          text: "text-highlight-foreground"   },  // gold
+  { bg: "bg-highlight/75",       text: "text-highlight-foreground"   },  // gold 75%
   { bg: "bg-primary/55",      text: "text-primary-foreground"  },  // navy 55%
 ] as const;
 

@@ -83,8 +83,8 @@ return (
   <>
     <div className="space-y-4">
       {isNotebookSubmission ? (
-        <div className="flex items-start gap-3 p-4 rounded-2xl border border-accent/30 bg-accent/5">
-          <BookOpen className="w-4 h-4 text-accent-foreground flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 rounded-2xl border border-highlight/30 bg-highlight/5">
+          <BookOpen className="w-4 h-4 text-highlight-foreground flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-foreground mb-1">
               📓 Envío en Cuaderno Requerido
@@ -128,8 +128,8 @@ return (
       <DialogContent className="bg-card rounded-3xl border border-border shadow-2xl sm:max-w-md p-0 overflow-hidden">
 
         <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
-          <span className="w-8 h-8 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-            <AlertTriangle className="w-4 h-4 text-accent-foreground" />
+          <span className="w-8 h-8 rounded-xl bg-highlight/10 flex items-center justify-center flex-shrink-0">
+            <AlertTriangle className="w-4 h-4 text-highlight-foreground" />
           </span>
           <h2 className="text-base font-bold text-foreground tracking-tight">
             Confirmar Envío de Cuaderno
@@ -137,9 +137,9 @@ return (
         </div>
 
         <div className="px-6 py-5 space-y-4">
-          <div className="p-4 bg-accent/5 rounded-2xl border border-accent/30">
+          <div className="p-4 bg-highlight/5 rounded-2xl border border-highlight/30">
             <div className="flex items-start gap-3">
-              <BookOpen className="w-5 h-5 text-accent-foreground flex-shrink-0 mt-0.5" />
+              <BookOpen className="w-5 h-5 text-highlight-foreground flex-shrink-0 mt-0.5" />
               <div className="space-y-2">
                 <p className="text-sm font-semibold text-foreground">
                   Esta es una tarea basada en cuaderno

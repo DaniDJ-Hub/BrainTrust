@@ -216,7 +216,7 @@ export const TaskSubmissionView: React.FC<TaskSubmissionViewProps> = ({
           <div
             className={`h-2 rounded-full transition-all ${
               percentage < 30 ? 'bg-primary' :
-              percentage < 70 ? 'bg-accent'  :
+              percentage < 70 ? 'bg-highlight'  :
               'bg-destructive'
             }`}
             style={{ width: `${percentage}%` }}
@@ -235,7 +235,7 @@ export const TaskSubmissionView: React.FC<TaskSubmissionViewProps> = ({
           <span className="text-xs font-semibold text-muted-foreground">Nivel de Confianza</span>
           <span className={`px-2 py-0.5 rounded-md text-xs font-bold ${
             aiResult.confidenceLevel === 'HIGH'   ? 'bg-destructive/10 text-destructive' :
-            aiResult.confidenceLevel === 'MEDIUM' ? 'bg-accent/20 text-accent-foreground' :
+            aiResult.confidenceLevel === 'MEDIUM' ? 'bg-highlight/20 text-highlight-foreground' :
             'bg-primary/10 text-primary'
           }`}>
             {aiResult.confidenceLevel === 'HIGH' ? 'ALTO' : aiResult.confidenceLevel === 'MEDIUM' ? 'MEDIO' : 'BAJO'}
@@ -269,9 +269,9 @@ export const TaskSubmissionView: React.FC<TaskSubmissionViewProps> = ({
         </code>
       </div>
 
-      <div className="p-4 rounded-2xl bg-accent/10 border border-accent/30">
+      <div className="p-4 rounded-2xl bg-highlight/10 border border-highlight/30">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="w-4 h-4 text-accent-foreground flex-shrink-0 mt-0.5" />
+          <AlertTriangle className="w-4 h-4 text-highlight-foreground flex-shrink-0 mt-0.5" />
           <div className="space-y-2">
             <h4 className="text-sm font-semibold text-foreground">
               Cómo interpretar los resultados de detección de IA
@@ -642,14 +642,14 @@ return (
                     isGraded
                       ? 'bg-primary/5 border-primary/20'
                       : isLate
-                      ? 'bg-accent/10 border-accent/30'
+                      ? 'bg-highlight/10 border-highlight/30'
                       : 'bg-muted/30 border-border'
                   }`}>
                     <div className="flex items-start gap-3">
                       {isGraded
                         ? <Award className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                         : isLate
-                        ? <AlertTriangle className="w-5 h-5 text-accent-foreground flex-shrink-0 mt-0.5" />
+                        ? <AlertTriangle className="w-5 h-5 text-highlight-foreground flex-shrink-0 mt-0.5" />
                         : <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />}
                       <div className="flex-1 min-w-0 space-y-2">
                         <p className="font-semibold text-sm text-foreground">
@@ -808,7 +808,7 @@ return (
             {assignment.dueDate && (
               <div className={`bg-card rounded-2xl border-l-4 border-t border-r border-b border-border shadow-sm overflow-hidden ${
                 timeRemaining?.overdue                              ? 'border-l-destructive' :
-                timeRemaining?.text.includes('d')                  ? 'border-l-accent'      :
+                timeRemaining?.text.includes('d')                  ? 'border-l-highlight'      :
                 'border-l-primary'
               }`}>
                 <div className="px-4 py-3 border-b border-border">

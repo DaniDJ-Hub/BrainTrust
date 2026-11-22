@@ -243,7 +243,7 @@ return (
                             {tarea.type === 'ASSIGNMENT' ? (
                               <FileText className="h-3 w-3 text-primary" />
                             ) : (
-                              <CheckCircle className="h-3 w-3 text-accent" />
+                              <CheckCircle className="h-3 w-3 text-highlight" />
                             )}
                             <span className="truncate text-foreground">{tarea.name}</span>
                           </div>
@@ -265,7 +265,7 @@ return (
                   <TableCell>
                     <Badge
                       variant="secondary"
-                      className={`text-base font-semibold bg-accent/10 text-accent-foreground border border-accent/20 ${obtenerColorCalificacion(estudiante.unitGrade)}`}
+                      className={`text-base font-semibold bg-highlight/10 text-highlight-foreground border border-highlight/20 ${obtenerColorCalificacion(estudiante.unitGrade)}`}
                     >
                       {estudiante.unitGrade}
                     </Badge>
@@ -304,7 +304,7 @@ return (
                                 onChange={(e) => setValorCalificacion(e.target.value)}
                                 placeholder="ej., 95% o A"
                                 required
-                                className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-accent"
+                                className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-highlight"
                               />
                             </div>
                             <div>
@@ -315,7 +315,7 @@ return (
                                 onChange={(e) => setRetroalimentacion(e.target.value)}
                                 placeholder="Retroalimentación para esta unidad (opcional)"
                                 rows={3}
-                                className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-accent"
+                                className="border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-highlight"
                               />
                             </div>
 
@@ -388,7 +388,7 @@ return (
               <div className="text-xs text-muted-foreground mt-1">Total Estudiantes</div>
             </div>
             <div className="text-center p-4 rounded-xl bg-secondary border border-border">
-              <div className="text-2xl font-bold text-accent">
+              <div className="text-2xl font-bold text-highlight">
                 {(() => {
                   const calificaciones = estudiantes
                     .filter(s => s.unitGrade !== 'N/A')

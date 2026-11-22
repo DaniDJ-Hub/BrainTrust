@@ -432,8 +432,8 @@ function UserDetailModal({ user, open, onClose }: { user: User | null, open: boo
               <p className="text-2xl font-bold text-primary">24</p>
               <p className="text-xs text-muted-foreground mt-0.5">Tareas</p>
             </div>
-            <div className="bg-accent/10 border border-accent/20 rounded-2xl p-4 text-center">
-              <p className="text-2xl font-bold text-accent-foreground">87%</p>
+            <div className="bg-highlight/10 border border-highlight/20 rounded-2xl p-4 text-center">
+              <p className="text-2xl font-bold text-highlight-foreground">87%</p>
               <p className="text-xs text-muted-foreground mt-0.5">Rendimiento</p>
             </div>
           </div>

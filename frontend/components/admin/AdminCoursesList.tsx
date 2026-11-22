@@ -260,7 +260,7 @@ export function AdminCoursesList({
                 <span
                   className={`px-2.5 py-1 text-xs rounded-lg font-semibold shadow-sm ${
                     course.active
-                      ? "bg-accent text-accent-foreground"
+                      ? "bg-highlight text-highlight-foreground"
                       : "bg-muted text-muted-foreground"
                   }`}
                 >
@@ -352,7 +352,7 @@ export function AdminCoursesList({
                 </button>
                 <button
                   onClick={() => onManageGrades?.(course)}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-accent/10 text-accent-foreground text-xs font-semibold hover:bg-accent/20 transition-all"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-highlight/10 text-highlight-foreground text-xs font-semibold hover:bg-highlight/20 transition-all"
                 >
                   <BarChart3 className="w-3.5 h-3.5" />
                   Calificaciones

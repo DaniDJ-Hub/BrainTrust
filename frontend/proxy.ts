@@ -48,7 +48,8 @@ const sharedRoutes = [
   '/settings',
   '/messages',
   '/notifications',
-  '/calendar'
+  '/calendar',
+  '/design'
 ];
 
 // ⚠️ CAMBIO PRINCIPAL: Renombré de 'proxy' a 'middleware'

@@ -4,118 +4,270 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════════
-   DESIGN TOKENS  ·  Light Mode  (Navy & Champagne Gold)
+   PALETTE  ·  Navy & Gold
+   Raw 100–900 scales. Same lightness ladder on every hue so
+   swapping one hue for another keeps the visual weight.
+   Components must use the semantic tokens below, not these.
    ═══════════════════════════════════════════════════════════ */
 :root {
-  /* Surfaces */
-  --background:          oklch(0.97 0.007 258);   /* #F3F5FA  soft blue-white  */
-  --foreground:          oklch(0.17 0.055 262);   /* #18274A  deep navy text   */
-  --card:                oklch(1 0 0);            /* #FFFFFF                   */
-  --card-foreground:     oklch(0.17 0.055 262);
-  --popover:             oklch(1 0 0);
-  --popover-foreground:  oklch(0.17 0.055 262);
+  --neutral-100: oklch(0.97 0.004 262);   /* #F4F5F8 */
+  --neutral-200: oklch(0.93 0.006 262);   /* #E6E8EC */
+  --neutral-300: oklch(0.87 0.010 262);   /* #D1D4DB */
+  --neutral-400: oklch(0.76 0.015 262);   /* #ACB1BB */
+  --neutral-500: oklch(0.64 0.018 262);   /* #868C97 */
+  --neutral-600: oklch(0.54 0.020 262);   /* #686F7B */
+  --neutral-700: oklch(0.45 0.022 262);   /* #4F5662 */
+  --neutral-800: oklch(0.35 0.025 262);   /* #333B48 */
+  --neutral-900: oklch(0.25 0.030 262);   /* #1A2230 */
 
-  /* Primary = Deep Navy */
-  --primary:             oklch(0.23 0.075 262);   /* #1B2A4A  */
-  --primary-foreground:  oklch(0.99 0 0);
+  --navy-100: oklch(0.97 0.015 262);      /* #F0F5FF */
+  --navy-200: oklch(0.93 0.030 262);      /* #DDE8FD */
+  --navy-300: oklch(0.87 0.050 262);      /* #C3D5F6 */
+  --navy-400: oklch(0.76 0.080 262);      /* #95B2E5 */
+  --navy-500: oklch(0.64 0.110 262);      /* #678CCF */
+  --navy-600: oklch(0.54 0.120 262);      /* #476DB4 */
+  --navy-700: oklch(0.45 0.110 262);      /* #325392 */
+  --navy-800: oklch(0.35 0.090 262);      /* #1F3969 */
+  --navy-900: oklch(0.25 0.075 262);      /* #0C1F45 */
 
-  /* Secondary = Pale navy tint */
-  --secondary:           oklch(0.93 0.015 262);
-  --secondary-foreground:oklch(0.23 0.075 262);
+  --gold-100: oklch(0.97 0.030 83);       /* #FFF4DF */
+  --gold-200: oklch(0.93 0.060 83);       /* #FCE5BB */
+  --gold-300: oklch(0.87 0.090 83);       /* #F1CF8F */
+  --gold-400: oklch(0.76 0.120 83);       /* #D6AA4F */
+  --gold-500: oklch(0.64 0.130 83);       /* #B28307 */
+  --gold-600: oklch(0.54 0.120 83);       /* #906600 */
+  --gold-700: oklch(0.45 0.100 83);       /* #704F00 */
+  --gold-800: oklch(0.35 0.080 83);       /* #4E3600 */
+  --gold-900: oklch(0.25 0.060 83);       /* #2F1E00 */
 
-  /* Muted */
-  --muted:               oklch(0.93 0.012 258);
-  --muted-foreground:    oklch(0.52 0.015 262);   /* #6B7A9A  */
+  --success-100: oklch(0.97 0.030 152);
+  --success-300: oklch(0.87 0.090 152);
+  --success-500: oklch(0.64 0.150 152);
+  --success-600: oklch(0.54 0.140 152);
+  --success-800: oklch(0.35 0.090 152);
 
-  /* Accent = Champagne Gold */
-  --accent:              oklch(0.73 0.13 83);     /* #C9A84C  */
-  --accent-foreground:   oklch(0.17 0.055 262);
+  --warning-100: oklch(0.97 0.030 70);
+  --warning-300: oklch(0.87 0.110 70);
+  --warning-500: oklch(0.64 0.160 70);
+  --warning-600: oklch(0.54 0.150 70);
+  --warning-800: oklch(0.35 0.100 70);
 
-  /* Destructive */
-  --destructive:         oklch(0.55 0.22 27);
-  --destructive-foreground: oklch(0.99 0 0);
+  --danger-100: oklch(0.97 0.020 27);
+  --danger-300: oklch(0.87 0.090 27);
+  --danger-500: oklch(0.64 0.200 27);
+  --danger-600: oklch(0.54 0.200 27);
+  --danger-800: oklch(0.35 0.130 27);
 
-  /* Borders / Inputs */
-  --border:              oklch(0.89 0.013 262);   /* #DDE3EF  */
-  --input:               oklch(0.89 0.013 262);
-  --ring:                oklch(0.73 0.13 83);     /* gold focus ring */
-
-  /* Radius */
-  --radius:              0.625rem;
-
-  /* Charts */
-  --chart-1: oklch(0.73 0.13 83);
-  --chart-2: oklch(0.50 0.10 262);
-  --chart-3: oklch(0.35 0.075 262);
-  --chart-4: oklch(0.83 0.19 84);
-  --chart-5: oklch(0.77 0.19 70);
-
-  /* Sidebar — always navy in light mode */
-  --sidebar:                      oklch(0.22 0.075 262);
-  --sidebar-foreground:           oklch(0.93 0.005 262);
-  --sidebar-primary:              oklch(0.73 0.13 83);
-  --sidebar-primary-foreground:   oklch(0.99 0 0);
-  --sidebar-accent:               oklch(0.30 0.07 262);
-  --sidebar-accent-foreground:    oklch(0.96 0.005 262);
-  --sidebar-border:               oklch(0.30 0.065 262);
-  --sidebar-ring:                 oklch(0.73 0.13 83);
+  --info-100: oklch(0.97 0.020 245);
+  --info-300: oklch(0.87 0.070 245);
+  --info-500: oklch(0.64 0.140 245);
+  --info-600: oklch(0.54 0.150 245);
+  --info-800: oklch(0.35 0.100 245);
 }
 
 /* ═══════════════════════════════════════════════════════════
-   DESIGN TOKENS  ·  Dark Mode  (Deep Navy Night)
+   SEMANTIC TOKENS  ·  Light
+   60% neutrals · 30% navy · 10% gold (highlight)
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  /* Surfaces */
+  --background:              var(--neutral-100);
+  --foreground:              var(--neutral-900);
+  --card:                    oklch(1 0 0);
+  --card-foreground:         var(--neutral-900);
+  --popover:                 oklch(1 0 0);
+  --popover-foreground:      var(--neutral-900);
+
+  /* Brand = navy */
+  --primary:                 var(--navy-800);
+  --primary-foreground:      oklch(1 0 0);
+  --primary-hover:           var(--navy-700);
+  --primary-active:          var(--navy-900);
+
+  --secondary:               var(--navy-100);
+  --secondary-foreground:    var(--navy-800);
+
+  --muted:                   var(--neutral-100);
+  --muted-foreground:        var(--neutral-600);
+
+  /* shadcn uses `accent` as the neutral hover surface */
+  --accent:                  var(--neutral-100);
+  --accent-foreground:       var(--neutral-900);
+
+  /* Highlight = gold. Never as text on light surfaces. */
+  --highlight:               var(--gold-400);
+  --highlight-foreground:    var(--navy-900);
+  --highlight-soft:          var(--gold-100);
+  --highlight-soft-foreground: var(--gold-800);
+
+  /* Semantic states: solid (icons/text) + soft (badges/alerts) */
+  --destructive:             var(--danger-600);
+  --destructive-foreground:  oklch(1 0 0);
+  --destructive-soft:        var(--danger-100);
+  --destructive-soft-foreground: var(--danger-800);
+
+  --success:                 var(--success-600);
+  --success-foreground:      oklch(1 0 0);
+  --success-soft:            var(--success-100);
+  --success-soft-foreground: var(--success-800);
+
+  --warning:                 var(--warning-600);
+  --warning-foreground:      oklch(1 0 0);
+  --warning-soft:            var(--warning-100);
+  --warning-soft-foreground: var(--warning-800);
+
+  --info:                    var(--info-600);
+  --info-foreground:         oklch(1 0 0);
+  --info-soft:               var(--info-100);
+  --info-soft-foreground:    var(--info-800);
+
+  /* Lines. --border is decorative; --input meets 3:1 for controls. */
+  --border:                  var(--neutral-200);
+  --border-strong:           var(--neutral-300);
+  --input:                   var(--neutral-500);
+  --ring:                    var(--navy-600);
+
+  --radius:                  0.625rem;
+
+  /* Elevation (navy-tinted, low opacity, high blur) */
+  --elevation-xs: 0 1px 2px 0 oklch(0.25 0.075 262 / 0.06);
+  --elevation-sm: 0 2px 8px -2px oklch(0.25 0.075 262 / 0.08), 0 1px 2px 0 oklch(0.25 0.075 262 / 0.04);
+  --elevation-md: 0 8px 24px -6px oklch(0.25 0.075 262 / 0.12), 0 2px 4px -1px oklch(0.25 0.075 262 / 0.04);
+  --elevation-lg: 0 24px 48px -12px oklch(0.25 0.075 262 / 0.18);
+
+  /* Charts */
+  --chart-1: var(--navy-700);
+  --chart-2: var(--gold-400);
+  --chart-3: var(--info-500);
+  --chart-4: var(--success-500);
+  --chart-5: var(--warning-500);
+
+  /* Sidebar — navy surface, gold active state with navy text */
+  --sidebar:                      var(--navy-900);
+  --sidebar-foreground:           var(--neutral-200);
+  --sidebar-primary:              var(--gold-400);
+  --sidebar-primary-foreground:   var(--navy-900);
+  --sidebar-accent:               var(--navy-800);
+  --sidebar-accent-foreground:    oklch(1 0 0);
+  --sidebar-border:               var(--navy-800);
+  --sidebar-ring:                 var(--gold-400);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SEMANTIC TOKENS  ·  Dark  (lighter surface = higher elevation)
    ═══════════════════════════════════════════════════════════ */
 .dark {
-  /* Surfaces */
-  --background:          oklch(0.14 0.042 262);   /* very deep navy   */
-  --foreground:          oklch(0.94 0.006 262);
-  --card:                oklch(0.19 0.048 262);   /* slightly lighter  */
-  --card-foreground:     oklch(0.94 0.006 262);
-  --popover:             oklch(0.19 0.048 262);
-  --popover-foreground:  oklch(0.94 0.006 262);
+  --background:              oklch(0.17 0.025 262);   /* #090F1A */
+  --foreground:              var(--neutral-100);
+  --card:                    oklch(0.21 0.030 262);   /* #111826 */
+  --card-foreground:         var(--neutral-100);
+  --popover:                 oklch(0.25 0.032 262);   /* #192231 */
+  --popover-foreground:      var(--neutral-100);
 
-  /* Primary = Gold (inverted in dark) */
-  --primary:             oklch(0.73 0.13 83);
-  --primary-foreground:  oklch(0.14 0.042 262);
+  /* Brand in dark = gold */
+  --primary:                 var(--gold-400);
+  --primary-foreground:      var(--navy-900);
+  --primary-hover:           var(--gold-300);
+  --primary-active:          var(--gold-500);
 
-  --secondary:           oklch(0.26 0.058 262);
-  --secondary-foreground:oklch(0.94 0.006 262);
+  --secondary:               oklch(0.27 0.045 262);
+  --secondary-foreground:    var(--neutral-100);
 
-  --muted:               oklch(0.25 0.052 262);
-  --muted-foreground:    oklch(0.65 0.015 262);
+  --muted:                   oklch(0.25 0.032 262);
+  --muted-foreground:        var(--neutral-400);
 
-  --accent:              oklch(0.73 0.13 83);
-  --accent-foreground:   oklch(0.14 0.042 262);
+  --accent:                  oklch(0.27 0.035 262);
+  --accent-foreground:       var(--neutral-100);
 
-  --destructive:         oklch(0.55 0.22 27);
-  --destructive-foreground: oklch(0.99 0 0);
+  --highlight:               var(--gold-400);
+  --highlight-foreground:    var(--navy-900);
+  --highlight-soft:          oklch(0.30 0.050 83);
+  --highlight-soft-foreground: oklch(0.87 0.090 83);
 
-  --border:              oklch(0.46 0.008 255);  /* cool gray, clearly visible */
-  --input:               oklch(0.46 0.008 255);
-  --ring:                oklch(0.73 0.13 83);
+  --destructive:             oklch(0.70 0.180 27);
+  --destructive-foreground:  var(--navy-900);
+  --destructive-soft:        oklch(0.30 0.080 27);
+  --destructive-soft-foreground: oklch(0.87 0.090 27);
 
-  --chart-1: oklch(0.73 0.13 83);
-  --chart-2: oklch(0.60 0.10 200);
-  --chart-3: oklch(0.77 0.19 70);
-  --chart-4: oklch(0.63 0.27 304);
-  --chart-5: oklch(0.65 0.25 16);
+  --success:                 oklch(0.76 0.130 152);
+  --success-foreground:      var(--navy-900);
+  --success-soft:            oklch(0.30 0.060 152);
+  --success-soft-foreground: oklch(0.87 0.090 152);
 
-  --sidebar:                      oklch(0.12 0.042 262);
-  --sidebar-foreground:           oklch(0.93 0.005 262);
-  --sidebar-primary:              oklch(0.73 0.13 83);
-  --sidebar-primary-foreground:   oklch(0.14 0.042 262);
-  --sidebar-accent:               oklch(0.22 0.055 262);
-  --sidebar-accent-foreground:    oklch(0.94 0.006 262);
-  --sidebar-border:               oklch(0.22 0.055 262);
-  --sidebar-ring:                 oklch(0.73 0.13 83);
+  --warning:                 oklch(0.76 0.150 70);
+  --warning-foreground:      var(--navy-900);
+  --warning-soft:            oklch(0.30 0.060 70);
+  --warning-soft-foreground: oklch(0.87 0.110 70);
+
+  --info:                    oklch(0.76 0.110 245);
+  --info-foreground:         var(--navy-900);
+  --info-soft:               oklch(0.30 0.060 245);
+  --info-soft-foreground:    oklch(0.87 0.070 245);
+
+  --border:                  oklch(0.32 0.030 262);
+  --border-strong:           oklch(0.40 0.030 262);
+  --input:                   oklch(0.52 0.020 262);
+  --ring:                    var(--gold-400);
+
+  /* No drop shadows in dark: elevation comes from surface lightness */
+  --elevation-xs: 0 0 0 0 transparent;
+  --elevation-sm: 0 0 0 0 transparent;
+  --elevation-md: 0 8px 24px -6px oklch(0 0 0 / 0.45);
+  --elevation-lg: 0 24px 48px -12px oklch(0 0 0 / 0.6);
+
+  --chart-1: var(--navy-400);
+  --chart-2: var(--gold-400);
+  --chart-3: var(--info-300);
+  --chart-4: var(--success-300);
+  --chart-5: var(--warning-300);
+
+  --sidebar:                      oklch(0.14 0.035 262);
+  --sidebar-foreground:           var(--neutral-200);
+  --sidebar-primary:              var(--gold-400);
+  --sidebar-primary-foreground:   var(--navy-900);
+  --sidebar-accent:               oklch(0.25 0.045 262);
+  --sidebar-accent-foreground:    var(--neutral-100);
+  --sidebar-border:               oklch(0.25 0.045 262);
+  --sidebar-ring:                 var(--gold-400);
 }
 
 /* ═══════════════════════════════════════════════════════════
    TAILWIND v4 THEME BRIDGE
    ═══════════════════════════════════════════════════════════ */
 @theme inline {
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", "Fira Code", monospace;
 
+  /* Palette scales (bg-navy-100, text-gold-800, …) */
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-800: var(--neutral-800);
+  --color-neutral-900: var(--neutral-900);
+  --color-navy-100: var(--navy-100);
+  --color-navy-200: var(--navy-200);
+  --color-navy-300: var(--navy-300);
+  --color-navy-400: var(--navy-400);
+  --color-navy-500: var(--navy-500);
+  --color-navy-600: var(--navy-600);
+  --color-navy-700: var(--navy-700);
+  --color-navy-800: var(--navy-800);
+  --color-navy-900: var(--navy-900);
+  --color-gold-100: var(--gold-100);
+  --color-gold-200: var(--gold-200);
+  --color-gold-300: var(--gold-300);
+  --color-gold-400: var(--gold-400);
+  --color-gold-500: var(--gold-500);
+  --color-gold-600: var(--gold-600);
+  --color-gold-700: var(--gold-700);
+  --color-gold-800: var(--gold-800);
+  --color-gold-900: var(--gold-900);
+
+  /* Semantic colors */
   --color-background:                var(--background);
   --color-foreground:                var(--foreground);
   --color-card:                      var(--card);
@@ -124,15 +276,36 @@
   --color-popover-foreground:        var(--popover-foreground);
   --color-primary:                   var(--primary);
   --color-primary-foreground:        var(--primary-foreground);
+  --color-primary-hover:             var(--primary-hover);
+  --color-primary-active:            var(--primary-active);
   --color-secondary:                 var(--secondary);
   --color-secondary-foreground:      var(--secondary-foreground);
   --color-muted:                     var(--muted);
   --color-muted-foreground:          var(--muted-foreground);
   --color-accent:                    var(--accent);
   --color-accent-foreground:         var(--accent-foreground);
+  --color-highlight:                 var(--highlight);
+  --color-highlight-foreground:      var(--highlight-foreground);
+  --color-highlight-soft:            var(--highlight-soft);
+  --color-highlight-soft-foreground: var(--highlight-soft-foreground);
   --color-destructive:               var(--destructive);
   --color-destructive-foreground:    var(--destructive-foreground);
+  --color-destructive-soft:          var(--destructive-soft);
+  --color-destructive-soft-foreground: var(--destructive-soft-foreground);
+  --color-success:                   var(--success);
+  --color-success-foreground:        var(--success-foreground);
+  --color-success-soft:              var(--success-soft);
+  --color-success-soft-foreground:   var(--success-soft-foreground);
+  --color-warning:                   var(--warning);
+  --color-warning-foreground:        var(--warning-foreground);
+  --color-warning-soft:              var(--warning-soft);
+  --color-warning-soft-foreground:   var(--warning-soft-foreground);
+  --color-info:                      var(--info);
+  --color-info-foreground:           var(--info-foreground);
+  --color-info-soft:                 var(--info-soft);
+  --color-info-soft-foreground:      var(--info-soft-foreground);
   --color-border:                    var(--border);
+  --color-border-strong:             var(--border-strong);
   --color-input:                     var(--input);
   --color-ring:                      var(--ring);
   --color-chart-1:                   var(--chart-1);
@@ -149,10 +322,53 @@
   --color-sidebar-border:            var(--sidebar-border);
   --color-sidebar-ring:              var(--sidebar-ring);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* Type scale (text-title, text-body, …). Dashboards cap at 24px except KPIs. */
+  --text-kpi: 1.875rem;
+  --text-kpi--line-height: 2.25rem;
+  --text-kpi--font-weight: 700;
+  --text-kpi--letter-spacing: -0.02em;
+  --text-title: 1.5rem;
+  --text-title--line-height: 2rem;
+  --text-title--font-weight: 600;
+  --text-title--letter-spacing: -0.02em;
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.75rem;
+  --text-heading--font-weight: 600;
+  --text-heading--letter-spacing: -0.01em;
+  --text-subheading: 1rem;
+  --text-subheading--line-height: 1.5rem;
+  --text-subheading--font-weight: 600;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.25rem;
+  --text-reading: 1rem;
+  --text-reading--line-height: 1.5rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-caption--font-weight: 500;
+  --text-overline: 0.75rem;
+  --text-overline--line-height: 1rem;
+  --text-overline--font-weight: 600;
+  --text-overline--letter-spacing: 0.06em;
+
+  /* Radii: three semantic steps; legacy steps clamped toward them */
+  --radius-tag: 6px;
+  --radius-control: 10px;
+  --radius-surface: 16px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 16px;
+  --radius-3xl: 16px;
+
+  /* Shadows: four levels; xl/2xl clamped to lg */
+  --shadow-xs: var(--elevation-xs);
+  --shadow-sm: var(--elevation-sm);
+  --shadow: var(--elevation-sm);
+  --shadow-md: var(--elevation-md);
+  --shadow-lg: var(--elevation-lg);
+  --shadow-xl: var(--elevation-lg);
+  --shadow-2xl: var(--elevation-lg);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -160,7 +376,7 @@
    ═══════════════════════════════════════════════════════════ */
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring;
   }
 
   html {
@@ -177,39 +393,43 @@
     @apply tracking-tight;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(0.8 0.01 262);
+    background: var(--border-strong);
     border-radius: 9999px;
   }
-  .dark ::-webkit-scrollbar-thumb {
-    background: oklch(0.35 0.04 262);
-  }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.65 0.015 262);
-  }
-  .dark ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.45 0.05 262);
+    background: var(--input);
   }
 
   .dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
   .dark textarea,
   .dark select {
-    border-color: oklch(0.46 0.008 255);
-    box-shadow: 0 0 0 1px oklch(0.46 0.008 255 / 0.5);
+    border-color: var(--input);
   }
 
   .dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
   .dark textarea:focus,
   .dark select:focus {
-    border-color: oklch(0.73 0.13 83);
-    box-shadow: 0 0 0 2px oklch(0.73 0.13 83 / 0.35);
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 35%, transparent);
     outline: none;
   }
 }
@@ -220,228 +440,199 @@
    ═══════════════════════════════════════════════════════════ */
 @layer utilities {
 
-  /* ── Page container ─────────────────────────────────────── */
+  /* ── Page ───────────────────────────────────────────────── */
   .page-container {
-    @apply bg-background min-h-screen p-4 sm:p-6 lg:p-8 space-y-6;
+    @apply bg-background min-h-screen p-4 sm:p-6 lg:p-8 space-y-8;
+  }
+  .page-title {
+    @apply text-title text-foreground;
+  }
+  .page-subtitle {
+    @apply text-body text-muted-foreground mt-1;
+  }
+  .section-label {
+    @apply text-overline uppercase text-muted-foreground;
   }
 
   /* ── Cards ──────────────────────────────────────────────── */
-  .card-base {
-    @apply bg-card border border-border rounded-2xl dark:border-border/80;
+  .card-base,
+  .card-elevated,
+  .card-padded,
+  .card-interactive,
+  .mobile-card {
+    @apply bg-card text-card-foreground border border-border rounded-surface;
   }
   .card-elevated {
-    @apply bg-card border border-border rounded-2xl shadow-sm dark:border-border/80 dark:shadow-none;
+    @apply shadow-xs;
   }
   .card-padded {
-    @apply bg-card border border-border rounded-2xl p-5 sm:p-6 dark:border-border/80;
+    @apply p-4 sm:p-6;
   }
   .card-interactive {
-    @apply bg-card border border-border rounded-2xl transition-all hover:border-primary/30 hover:shadow-md cursor-pointer dark:border-border/80;
+    @apply cursor-pointer transition-[border-color,box-shadow] duration-150
+           hover:border-border-strong hover:shadow-sm
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
   .mobile-card {
-    @apply bg-card rounded-2xl border border-border p-4 space-y-3 dark:border-border/80;
+    @apply p-4 space-y-3;
   }
 
-  /* ── Primary button ─────────────────────────────────────── */
+  /* ── Buttons ────────────────────────────────────────────── */
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost,
+  .btn-quiet,
+  .btn-destructive,
+  .btn-accent,
+  .btn-highlight {
+    @apply inline-flex h-10 items-center justify-center gap-2 px-4 rounded-control
+           text-body font-semibold whitespace-nowrap select-none
+           transition-[background-color,border-color,color,transform] duration-150 ease-out
+           active:scale-[0.98]
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background
+           disabled:cursor-not-allowed disabled:active:scale-100
+           disabled:bg-muted disabled:text-muted-foreground disabled:border-transparent
+           aria-busy:cursor-progress;
+  }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-           bg-primary text-primary-foreground text-sm font-semibold
-           hover:opacity-90 active:scale-[0.97]
-           disabled:opacity-40 disabled:cursor-not-allowed
-           transition-all duration-150;
+    @apply bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-active;
   }
-
-  /* ── Ghost / outline button ─────────────────────────────── */
+  /* Secondary = outline. .btn-ghost kept as alias for existing screens. */
+  .btn-secondary,
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-           border border-border text-sm font-medium text-muted-foreground
-           hover:text-foreground hover:bg-muted/50
-           disabled:opacity-40 disabled:cursor-not-allowed
-           transition-all duration-150;
+    @apply bg-card border border-input text-foreground hover:bg-accent;
   }
-
-  /* ── Destructive button ─────────────────────────────────── */
+  .btn-quiet {
+    @apply text-muted-foreground hover:bg-accent hover:text-foreground;
+  }
   .btn-destructive {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-           bg-destructive text-destructive-foreground text-sm font-semibold
-           hover:opacity-90 active:scale-[0.97]
-           disabled:opacity-40 disabled:cursor-not-allowed
-           transition-all duration-150;
+    @apply bg-destructive text-destructive-foreground hover:brightness-110 active:brightness-95;
   }
-
-  /* ── Accent (gold) button ───────────────────────────────── */
+  /* Gold call-to-action. At most one per view. .btn-accent kept as alias. */
+  .btn-highlight,
   .btn-accent {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-           bg-accent text-accent-foreground text-sm font-semibold
-           hover:opacity-90 active:scale-[0.97]
-           disabled:opacity-40 disabled:cursor-not-allowed
-           transition-all duration-150;
+    @apply bg-highlight text-highlight-foreground hover:brightness-105 active:brightness-95;
+  }
+  .btn-sm {
+    @apply h-8 px-3 text-caption;
+  }
+  .btn-lg {
+    @apply h-11 px-5;
   }
 
-  /* ── Icon button (neutral) ──────────────────────────────── */
-  .icon-btn {
-    @apply p-2 rounded-xl text-muted-foreground
-           hover:text-foreground hover:bg-muted/50
-           transition-all duration-150;
-  }
-
-  /* ── Icon button (primary hover) ───────────────────────── */
-  .icon-btn-primary {
-    @apply p-2 rounded-xl text-muted-foreground
-           hover:text-primary hover:bg-primary/10
-           transition-all duration-150;
-  }
-
-  /* ── Icon button (destructive hover) ───────────────────── */
+  /* ── Icon buttons (40×40 target) ────────────────────────── */
+  .icon-btn,
+  .icon-btn-primary,
   .icon-btn-destructive {
-    @apply p-2 rounded-xl text-muted-foreground
-           hover:text-destructive hover:bg-destructive/10
-           transition-all duration-150;
+    @apply inline-flex size-10 shrink-0 items-center justify-center rounded-control
+           text-muted-foreground transition-colors duration-150
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .icon-btn {
+    @apply hover:bg-accent hover:text-foreground;
+  }
+  .icon-btn-primary {
+    @apply hover:bg-secondary hover:text-secondary-foreground;
+  }
+  .icon-btn-destructive {
+    @apply hover:bg-destructive-soft hover:text-destructive-soft-foreground;
   }
 
-  /* ── Form input ─────────────────────────────────────────── */
-  .input-field {
-    @apply w-full px-4 py-2.5 rounded-xl
-           border border-border bg-background
-           text-sm text-foreground placeholder:text-muted-foreground
-           focus:outline-none focus:ring-2 focus:ring-ring/50
-           disabled:opacity-40
-           dark:border-border/90 dark:bg-background dark:ring-1 dark:ring-border/50
-           dark:focus:ring-2 dark:focus:ring-ring/60
-           transition-all duration-150;
-  }
-
-  /* ── Select / dropdown ──────────────────────────────────── */
+  /* ── Forms ──────────────────────────────────────────────── */
+  .input-field,
   .select-field {
-    @apply w-full px-4 py-2.5 rounded-xl
-           border border-border bg-background
-           text-sm text-foreground
-           focus:outline-none focus:ring-2 focus:ring-ring/50
-           disabled:opacity-40
-           dark:border-border/90 dark:ring-1 dark:ring-border/50
-           dark:focus:ring-2 dark:focus:ring-ring/60
-           transition-all duration-150;
+    @apply w-full h-10 px-3 rounded-control
+           border border-input bg-card text-body text-foreground
+           placeholder:text-muted-foreground
+           transition-[border-color,box-shadow] duration-150
+           focus-visible:outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30
+           aria-invalid:border-destructive aria-invalid:ring-destructive/20
+           disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground;
   }
-
-  /* ── Form label ─────────────────────────────────────────── */
   .form-label {
-    @apply block text-xs font-semibold text-foreground mb-1.5;
+    @apply block text-body font-medium text-foreground mb-1.5;
+  }
+  .form-hint {
+    @apply mt-1.5 text-caption font-normal text-muted-foreground;
+  }
+  .form-error {
+    @apply mt-1.5 text-caption text-destructive;
   }
 
-  /* ── Section label (uppercase small caps) ───────────────── */
-  .section-label {
-    @apply text-xs font-semibold text-muted-foreground uppercase tracking-widest;
-  }
-
-  /* ── Badge: primary ─────────────────────────────────────── */
-  .badge-primary {
-    @apply inline-flex items-center px-2 py-0.5 rounded-md
-           bg-primary/10 text-primary text-xs font-semibold;
-  }
-
-  /* ── Badge: accent (gold) ───────────────────────────────── */
-  .badge-accent {
-    @apply inline-flex items-center px-2 py-0.5 rounded-md
-           bg-accent/20 text-accent-foreground text-xs font-semibold;
-  }
-
-  /* ── Badge: muted ───────────────────────────────────────── */
-  .badge-muted {
-    @apply inline-flex items-center px-2 py-0.5 rounded-md
-           bg-muted text-muted-foreground text-xs font-semibold;
-  }
-
-  /* ── Badge: success ─────────────────────────────────────── */
-  .badge-success {
-    @apply inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold
-           bg-emerald-100 text-emerald-800
-           dark:bg-emerald-900/30 dark:text-emerald-400;
-  }
-
-  /* ── Badge: destructive ─────────────────────────────────── */
+  /* ── Badges (soft: tinted background + dark text) ───────── */
+  .badge-primary,
+  .badge-accent,
+  .badge-highlight,
+  .badge-muted,
+  .badge-success,
+  .badge-warning,
+  .badge-info,
   .badge-destructive {
-    @apply inline-flex items-center px-2 py-0.5 rounded-md
-           bg-destructive/10 text-destructive text-xs font-semibold;
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-tag text-caption font-semibold whitespace-nowrap;
   }
+  .badge-primary     { @apply bg-secondary text-secondary-foreground; }
+  .badge-highlight,
+  .badge-accent      { @apply bg-highlight-soft text-highlight-soft-foreground; }
+  .badge-muted       { @apply bg-muted text-muted-foreground; }
+  .badge-success     { @apply bg-success-soft text-success-soft-foreground; }
+  .badge-warning     { @apply bg-warning-soft text-warning-soft-foreground; }
+  .badge-info        { @apply bg-info-soft text-info-soft-foreground; }
+  .badge-destructive { @apply bg-destructive-soft text-destructive-soft-foreground; }
 
-  /* ── Table: header cell ─────────────────────────────────── */
+  /* ── Tables ─────────────────────────────────────────────── */
   .table-th {
-    @apply px-6 py-4 text-xs font-semibold uppercase tracking-widest
-           text-muted-foreground text-left whitespace-nowrap;
+    @apply px-4 py-3 bg-muted text-overline uppercase text-muted-foreground text-left whitespace-nowrap;
   }
-
-  /* ── Table: body cell ───────────────────────────────────── */
   .table-td {
-    @apply px-6 py-4;
+    @apply px-4 py-3.5 text-body;
   }
-
-  /* ── Table: row hover ───────────────────────────────────── */
   .table-row {
-    @apply hover:bg-muted/30 transition-colors;
+    @apply border-b border-border last:border-0 hover:bg-muted/60 transition-colors;
   }
 
-  /* ── Modal: dark overlay ────────────────────────────────── */
+  /* ── Modals ─────────────────────────────────────────────── */
   .modal-overlay {
     @apply fixed inset-0 z-50 flex items-center justify-center
-           bg-black/60 backdrop-blur-sm p-4;
+           bg-neutral-900/60 backdrop-blur-sm p-4;
   }
-
-  /* ── Modal: panel container ─────────────────────────────── */
   .modal-panel {
-    @apply bg-card rounded-3xl border border-border shadow-2xl
+    @apply bg-popover text-popover-foreground rounded-surface border border-border shadow-lg
            w-full max-h-[90vh] overflow-hidden flex flex-col;
   }
-
-  /* ── Modal: header bar ──────────────────────────────────── */
   .modal-header {
-    @apply flex items-center justify-between
-           px-5 py-4 sm:px-7 sm:py-5
+    @apply flex items-center justify-between gap-4
+           px-5 py-4 sm:px-6
            border-b border-border flex-shrink-0;
   }
-
-  /* ── Modal: scrollable body ─────────────────────────────── */
   .modal-body {
-    @apply flex-1 overflow-y-auto px-5 py-6 sm:px-7;
+    @apply flex-1 overflow-y-auto px-5 py-6 sm:px-6;
   }
-
-  /* ── Modal: sticky footer ───────────────────────────────── */
   .modal-footer {
-    @apply px-5 py-4 sm:px-7
-           border-t border-border bg-muted/30 flex-shrink-0;
+    @apply flex items-center justify-end gap-3
+           px-5 py-4 sm:px-6
+           border-t border-border bg-muted/50 flex-shrink-0;
   }
 
-  /* ── Stat card ──────────────────────────────────────────── */
-  .stat-card {
-    @apply bg-card border border-border rounded-2xl p-4 flex flex-col gap-1;
-  }
-  .stat-card-primary {
-    @apply bg-primary/5 border border-primary/20 rounded-2xl p-4;
-  }
+  /* ── Stat cards ─────────────────────────────────────────── */
+  .stat-card,
+  .stat-card-primary,
   .stat-card-accent {
-    @apply bg-accent/10 border border-accent/30 rounded-2xl p-4;
+    @apply rounded-surface border p-4 flex flex-col gap-1;
   }
+  .stat-card         { @apply bg-card border-border; }
+  .stat-card-primary { @apply bg-secondary border-secondary; }
+  .stat-card-accent  { @apply bg-highlight-soft border-highlight-soft; }
 
-  /* ── Icon badge (colored circle behind an icon) ─────────── */
-  .icon-badge {
-    @apply w-9 h-9 rounded-2xl flex items-center justify-center
-           bg-primary/10 flex-shrink-0;
-  }
-  .icon-badge-accent {
-    @apply w-9 h-9 rounded-2xl flex items-center justify-center
-           bg-accent/20 flex-shrink-0;
-  }
+  /* ── Icon badge (tinted square behind an icon) ──────────── */
+  .icon-badge,
+  .icon-badge-accent,
   .icon-badge-destructive {
-    @apply w-9 h-9 rounded-2xl flex items-center justify-center
-           bg-destructive/10 flex-shrink-0;
+    @apply size-9 rounded-control flex items-center justify-center flex-shrink-0;
   }
-
-  /* ── Page title block ───────────────────────────────────── */
-  .page-title {
-    @apply text-2xl sm:text-3xl font-bold text-foreground tracking-tight;
-  }
-  .page-subtitle {
-    @apply text-sm text-muted-foreground mt-1;
-  }
+  .icon-badge             { @apply bg-secondary text-secondary-foreground; }
+  .icon-badge-accent      { @apply bg-highlight-soft text-highlight-soft-foreground; }
+  .icon-badge-destructive { @apply bg-destructive-soft text-destructive-soft-foreground; }
 
   /* ── Glassmorphism surface ──────────────────────────────── */
   .glass {

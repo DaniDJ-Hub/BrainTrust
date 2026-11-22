@@ -265,12 +265,12 @@ export function SubmissionDetailView({
             </div>
 
             {/* Warning */}
-            <div className="bg-accent/10 border border-accent/30 rounded-xl p-4">
+            <div className="bg-highlight/10 border border-highlight/30 rounded-xl p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
-                <div className="space-y-1 text-sm text-accent-foreground">
+                <AlertTriangle className="h-4 w-4 text-highlight flex-shrink-0 mt-0.5" />
+                <div className="space-y-1 text-sm text-highlight-foreground">
                   <p className="font-semibold">Consideraciones Importantes</p>
-                  <ul className="space-y-1 text-xs text-accent-foreground/80 list-disc list-inside">
+                  <ul className="space-y-1 text-xs text-highlight-foreground/80 list-disc list-inside">
                     <li>Las herramientas de detección de IA pueden producir falsos positivos o negativos.</li>
                     <li>El contenido humano que sigue patrones predecibles puede ser marcado.</li>
                     <li>Use esto como una señal — no como la única base para decisiones.</li>
@@ -320,9 +320,9 @@ export function SubmissionDetailView({
             <Award className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium text-primary">Máx: {data.maxPoints} pts</span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-2 bg-accent/10 rounded-lg">
-            <Calendar className="h-4 w-4 text-accent" />
-            <span className="text-sm font-medium text-accent-foreground">
+          <div className="flex items-center gap-2 px-3 py-2 bg-highlight/10 rounded-lg">
+            <Calendar className="h-4 w-4 text-highlight" />
+            <span className="text-sm font-medium text-highlight-foreground">
               Fecha Límite: {formatearFechaCorta(data.deadline)}
             </span>
           </div>
@@ -564,7 +564,7 @@ export function SubmissionDetailView({
 
           <Card className="p-6">
             <div className="flex items-center gap-3 mb-4">
-              <Brain className="h-5 w-5 text-accent" />
+              <Brain className="h-5 w-5 text-highlight" />
               <h2 className="text-xl font-bold text-foreground">Análisis de Contenido IA</h2>
             </div>
             {data.submission?.aiAnalysis ? (
@@ -616,8 +616,8 @@ export function SubmissionDetailView({
                 <p className="text-sm text-muted-foreground">
                   No se ha realizado ningún análisis de IA en esta entrega.
                 </p>
-                <div className="p-3 bg-accent/10 rounded-lg border border-accent/30">
-                  <p className="text-sm text-accent-foreground">
+                <div className="p-3 bg-highlight/10 rounded-lg border border-highlight/30">
+                  <p className="text-sm text-highlight-foreground">
                     El análisis de IA puede ayudar a detectar contenido generado por IA. Esta función requiere
                     activación manual.
                   </p>

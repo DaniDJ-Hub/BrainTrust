@@ -398,7 +398,7 @@ return (
       <select
         value={filterState ?? ''}
         onChange={e => { setFilterState(e.target.value ? Number(e.target.value) : null); setPage(0); }}
-        className="flex-1 px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+        className="flex-1 px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-highlight/50 transition-all"
       >
         <option value="">Todos los estados</option>
         {allStates.map(s => <option key={s.id} value={s.id}>{s.value}</option>)}
@@ -422,7 +422,7 @@ return (
         <select
           value={newStateId}
           onChange={e => setNewStateId(e.target.value)}
-          className="px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+          className="px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-highlight/50 transition-all"
         >
           <option value="">Selecciona estado *</option>
           {allStates.map(s => <option key={s.id} value={s.id}>{s.value}</option>)}
@@ -463,7 +463,7 @@ return (
       <select
         value={filterMuni ?? ''}
         onChange={e => { setFilterMuni(e.target.value ? Number(e.target.value) : null); setPage(0); }}
-        className="flex-1 px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+        className="flex-1 px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-highlight/50 transition-all"
       >
         <option value="">Todos los municipios</option>
         {allMunis.map(m => <option key={m.id} value={m.id}>{m.municipalityName}</option>)}
@@ -487,7 +487,7 @@ return (
         <select
           value={newMuniId}
           onChange={e => setNewMuniId(e.target.value)}
-          className="px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+          className="px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-highlight/50 transition-all"
         >
           <option value="">Selecciona municipio *</option>
           {allMunis.map(m => <option key={m.id} value={m.id}>{m.municipalityName}</option>)}
@@ -983,11 +983,11 @@ return (
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-3.5 rounded-xl bg-accent/10 border border-accent/30 mb-5 text-xs text-accent-foreground">
+            <div className="flex items-start gap-3 p-3.5 rounded-xl bg-highlight/10 border border-highlight/30 mb-5 text-xs text-highlight-foreground">
               <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <span>
                 <strong>Nota:</strong> Actualizar/Eliminar devuelve{' '}
-                <code className="font-mono bg-accent/20 px-1.5 py-0.5 rounded-md">409 Conflict</code>{' '}
+                <code className="font-mono bg-highlight/20 px-1.5 py-0.5 rounded-md">409 Conflict</code>{' '}
                 cuando la entrada está en uso o tiene registros dependientes.
               </span>
             </div>

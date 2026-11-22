@@ -582,7 +582,7 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold ${
                       puntosTotales === datosEdicion.totalScore
                         ? 'bg-primary/10 text-primary'
-                        : 'bg-accent/10 text-accent-foreground'
+                        : 'bg-highlight/10 text-highlight-foreground'
                     }`}>
                       <Calculator className="w-3.5 h-3.5" />
                       {puntosTotales} pts total
@@ -611,7 +611,7 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
                                     {pregunta.type === "multiple-choice" ? "Opción Múltiple" : "Respuesta Abierta"}
                                   </span>
                                   {pregunta.id.startsWith("temp_") && (
-                                    <span className="px-2 py-0.5 rounded-md bg-accent/20 text-accent-foreground text-xs font-semibold">Nueva</span>
+                                    <span className="px-2 py-0.5 rounded-md bg-highlight/20 text-highlight-foreground text-xs font-semibold">Nueva</span>
                                   )}
                                 </div>
                                 <input

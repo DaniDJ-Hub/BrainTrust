@@ -512,7 +512,7 @@ return (
                 </div>
 
                 {!porcentajeOk && (
-                  <div className="flex items-center gap-2 text-xs font-semibold text-accent-foreground">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-highlight-foreground">
                     <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
                     Los porcentajes deben sumar exactamente 100% antes de poder guardar.
                   </div>

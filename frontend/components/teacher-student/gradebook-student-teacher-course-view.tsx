@@ -180,7 +180,7 @@ export function GradebookCourseView({
                 <div className="text-xs text-muted-foreground mt-1">Total Estudiantes</div>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary border border-border">
-                <div className="text-2xl font-bold text-accent">{estadisticasCurso.average}</div>
+                <div className="text-2xl font-bold text-highlight">{estadisticasCurso.average}</div>
                 <div className="text-xs text-muted-foreground mt-1">Calificación Promedio</div>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary border border-border">
@@ -220,7 +220,7 @@ export function GradebookCourseView({
                     <TableCell>
                       <Badge
                         variant="secondary"
-                        className="text-base font-semibold bg-accent/10 text-accent-foreground border border-accent/20"
+                        className="text-base font-semibold bg-highlight/10 text-highlight-foreground border border-highlight/20"
                       >
                         {libroCalificaciones.finalGrade || 'N/A'}
                       </Badge>

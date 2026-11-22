@@ -380,7 +380,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
 
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground flex items-center gap-2">
-              <AlertCircle className="w-3.5 h-3.5 text-accent-foreground" />
+              <AlertCircle className="w-3.5 h-3.5 text-highlight-foreground" />
               Instrucciones Importantes
             </p>
             <ul className="space-y-1 pl-1">
@@ -505,11 +505,11 @@ export const QuizView: React.FC<QuizViewProps> = ({
                           : isAnswered
                           ? 'bg-primary/10 text-primary border-primary/20'
                           : 'bg-muted/30 text-muted-foreground border-border hover:bg-muted/60'
-                      } ${isFlagged ? 'border-accent-foreground border-2' : ''}`}
+                      } ${isFlagged ? 'border-highlight-foreground border-2' : ''}`}
                     >
                       {index + 1}
                       {isFlagged && (
-                        <Flag className="w-2.5 h-2.5 absolute -top-1 -right-1 text-accent-foreground fill-accent-foreground" />
+                        <Flag className="w-2.5 h-2.5 absolute -top-1 -right-1 text-highlight-foreground fill-highlight-foreground" />
                       )}
                     </button>
                   );
@@ -528,7 +528,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                   </div>
                 ))}
                 <div className="flex items-center gap-2">
-                  <Flag className="w-3 h-3 text-accent-foreground" />
+                  <Flag className="w-3 h-3 text-highlight-foreground" />
                   <span>Marcada</span>
                 </div>
               </div>
@@ -560,7 +560,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                       {currentQuestion.points} punto{currentQuestion.points !== 1 ? 's' : ''}
                     </span>
                     {flaggedQuestions.has(currentQuestion.id) && (
-                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-accent/20 border border-accent/30 text-xs font-semibold text-accent-foreground">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-highlight/20 border border-highlight/30 text-xs font-semibold text-highlight-foreground">
                         <Flag className="w-3 h-3" />
                         Marcada
                       </span>
@@ -573,7 +573,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                   onClick={() => toggleFlag(currentQuestion.id)}
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-all flex-shrink-0 ${
                     flaggedQuestions.has(currentQuestion.id)
-                      ? 'bg-accent/20 border-accent/30 text-accent-foreground'
+                      ? 'bg-highlight/20 border-highlight/30 text-highlight-foreground'
                       : 'border-border text-muted-foreground hover:bg-muted/50'
                   }`}
                 >
@@ -897,7 +897,7 @@ return (
         <p className="text-sm text-muted-foreground mb-5">{quiz.title}</p>
 
         {!canViewResults && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-5 bg-accent/10 border border-accent/30 rounded-xl text-xs font-semibold text-accent-foreground">
+          <div className="inline-flex items-center gap-2 px-4 py-2 mb-5 bg-highlight/10 border border-highlight/30 rounded-xl text-xs font-semibold text-highlight-foreground">
             <EyeOff className="w-3.5 h-3.5" />
             Las respuestas correctas no están disponibles para este cuestionario
           </div>
@@ -912,8 +912,8 @@ return (
             <p className="text-2xl font-bold text-primary">{totalMaxScore}</p>
             <p className="text-xs text-muted-foreground mt-0.5">Puntaje Máx.</p>
           </div>
-          <div className="bg-accent/10 border border-accent/20 rounded-2xl p-4 text-center">
-            <p className="text-2xl font-bold text-accent-foreground">{Math.round(percentage)}%</p>
+          <div className="bg-highlight/10 border border-highlight/20 rounded-2xl p-4 text-center">
+            <p className="text-2xl font-bold text-highlight-foreground">{Math.round(percentage)}%</p>
             <p className="text-xs text-muted-foreground mt-0.5">Porcentaje</p>
           </div>
           {hasDetailedData && (
@@ -927,7 +927,7 @@ return (
         </div>
 
         {submission.teacherFeedback && (
-          <div className="mt-5 p-4 bg-accent/10 border border-accent/30 rounded-2xl max-w-lg mx-auto text-left">
+          <div className="mt-5 p-4 bg-highlight/10 border border-highlight/30 rounded-2xl max-w-lg mx-auto text-left">
             <p className="text-xs font-semibold text-foreground mb-1">Retroalimentación del Profesor</p>
             <p className="text-sm text-muted-foreground">{submission.teacherFeedback}</p>
           </div>
@@ -986,7 +986,7 @@ return (
                           </span>
                         )}
                         {needsReview ? (
-                          <span className="px-2 py-0.5 rounded-md bg-accent/20 border border-accent/30 text-xs font-semibold text-accent-foreground">
+                          <span className="px-2 py-0.5 rounded-md bg-highlight/20 border border-highlight/30 text-xs font-semibold text-highlight-foreground">
                             Pendiente de Revisión
                           </span>
                         ) : (
@@ -1007,7 +1007,7 @@ return (
                   <p className="text-xs font-semibold text-foreground mb-1.5">Tu respuesta:</p>
                   <div className={`p-3 rounded-xl border text-sm font-medium ${
                     needsReview
-                      ? "bg-accent/10 border-accent/30 text-accent-foreground"
+                      ? "bg-highlight/10 border-highlight/30 text-highlight-foreground"
                       : detailedAnswer?.isCorrect
                       ? "bg-primary/5 border-primary/20 text-foreground"
                       : "bg-destructive/5 border-destructive/20 text-foreground"
@@ -1022,8 +1022,8 @@ return (
                 </div>
 
                 {needsReview && (
-                  <div className="flex items-start gap-3 p-3 rounded-xl bg-accent/10 border border-accent/30">
-                    <AlertCircle className="w-4 h-4 text-accent-foreground flex-shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-highlight/10 border border-highlight/30">
+                    <AlertCircle className="w-4 h-4 text-highlight-foreground flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="text-xs font-bold text-foreground">Esta respuesta está pendiente de revisión del profesor</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
@@ -1111,8 +1111,8 @@ return (
                 {detailedAnswer?.feedback && (
                   <div>
                     <p className="text-xs font-semibold text-foreground mb-1.5">Retroalimentación del Profesor:</p>
-                    <div className="p-3 rounded-xl border bg-accent/10 border-accent/30">
-                      <p className="text-sm text-accent-foreground">{detailedAnswer.feedback}</p>
+                    <div className="p-3 rounded-xl border bg-highlight/10 border-highlight/30">
+                      <p className="text-sm text-highlight-foreground">{detailedAnswer.feedback}</p>
                     </div>
                   </div>
                 )}
@@ -1131,7 +1131,7 @@ return (
             {[
               { label: 'Correctas',        value: correctCount,   style: 'bg-primary/5 border-primary/20 text-primary'          },
               { label: 'Incorrectas',      value: incorrectCount, style: 'bg-destructive/5 border-destructive/20 text-destructive' },
-              { label: 'Pendientes', value: pendingCount,   style: 'bg-accent/10 border-accent/20 text-accent-foreground'  },
+              { label: 'Pendientes', value: pendingCount,   style: 'bg-highlight/10 border-highlight/20 text-highlight-foreground'  },
               { label: 'Tiempo Total',     value: `${Math.round((submission.quizData?.timeSpent ?? 0) / 60)}m`, style: 'bg-muted/50 border-border text-foreground' },
             ].map(({ label, value, style }) => (
               <div key={label} className={`rounded-2xl border p-4 text-center ${style}`}>
@@ -1156,7 +1156,7 @@ return (
             </span>{' '}
             ({Math.round(percentage)}%).
             {pendingCount > 0 && (
-              <span className="block mt-1 text-accent-foreground font-semibold">
+              <span className="block mt-1 text-highlight-foreground font-semibold">
                 Nota: {pendingCount} pregunta{pendingCount !== 1 ? 's' : ''} pendiente{pendingCount !== 1 ? 's' : ''} de revisión. Tu calificación podría aumentar.
               </span>
             )}

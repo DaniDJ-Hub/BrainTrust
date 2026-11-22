@@ -122,7 +122,7 @@ function ToastContainer({ toasts }: { toasts: Toast[] }) {
   const cfg = {
     success: { Icon: Check,         classes: 'bg-primary/10 border-primary/30 text-primary',             ic: 'text-primary' },
     error:   { Icon: X,             classes: 'bg-destructive/10 border-destructive/30 text-destructive', ic: 'text-destructive' },
-    warning: { Icon: AlertTriangle, classes: 'bg-accent/10 border-accent/30 text-accent-foreground',     ic: 'text-accent-foreground' },
+    warning: { Icon: AlertTriangle, classes: 'bg-highlight/10 border-highlight/30 text-highlight-foreground',     ic: 'text-highlight-foreground' },
   };
   return (
     <div className="fixed bottom-6 right-6 flex flex-col gap-2 z-50 pointer-events-none">
@@ -446,11 +446,11 @@ return (
             </div>
           </div>
 
-          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-accent/10 border border-accent/30 mb-5 text-xs text-accent-foreground">
+          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-highlight/10 border border-highlight/30 mb-5 text-xs text-highlight-foreground">
             <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <span>
               <strong>Nota:</strong> Eliminar devuelve{' '}
-              <code className="font-mono bg-accent/20 px-1.5 py-0.5 rounded-md">409 Conflict</code>{' '}
+              <code className="font-mono bg-highlight/20 px-1.5 py-0.5 rounded-md">409 Conflict</code>{' '}
               cuando la actividad está asignada actualmente a usuarios.
             </span>
           </div>

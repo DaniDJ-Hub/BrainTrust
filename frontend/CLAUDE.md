@@ -56,24 +56,34 @@ lib/
 ```
 
 ## Design System
-All design tokens live in `app/globals.css`. **Navy & Gold hotel theme**.
+All design tokens live in `app/globals.css`. **Navy & Gold**. Live catalogue at `/design` (non-production only).
 
-### Colors
-- Primary (light): deep navy `oklch(0.23 0.075 262)` → `#1B2A4A`
-- Primary (dark): champagne gold `oklch(0.73 0.13 83)` → `#C9A84C`
-- Accent: gold `#C9A84C`
-- Sidebar: always navy, gold active states
+### Colors (60-30-10)
+- 60% neutrals: `background`, `card`, `muted`, `foreground`, `muted-foreground`, `border`
+- 30% navy brand: `primary` (navy-800 light / gold-400 dark), `primary-hover`, `primary-active`, `secondary`, `ring`
+- 10% gold: `highlight`, `highlight-foreground`, `highlight-soft(-foreground)`. Never gold text on light surfaces.
+- `accent` is the **neutral hover surface** used by shadcn (ghost/outline/menu items). Do not use it for gold.
+- Semantic: `success`, `warning`, `info`, `destructive`, each with `-foreground`, `-soft`, `-soft-foreground`
+- Lines: `border` (decorative), `border-strong`, `input` (form controls, ≥3:1)
+- Raw scales `neutral|navy|gold-100…900` exist for special cases; prefer semantic tokens.
+
+### Typography, radius, shadow
+- Font: Inter via `next/font`. Text tokens: `text-kpi`, `text-title`, `text-heading`, `text-subheading`, `text-reading`, `text-body`, `text-caption`, `text-overline`
+- Radius: `rounded-tag` (6), `rounded-control` (10), `rounded-surface` (16), `rounded-full`
+- Shadow: `shadow-xs` (card), `shadow-sm` (hover), `shadow-md` (menus), `shadow-lg` (modals). None in dark mode.
 
 ### Custom Utility Classes (use instead of repeating inline Tailwind)
 ```
-.btn-primary      .btn-ghost         .btn-destructive   .btn-accent
+.btn-primary      .btn-secondary     .btn-quiet         .btn-highlight   .btn-destructive
+.btn-sm           .btn-lg            (.btn-ghost = alias of secondary, .btn-accent = alias of highlight)
 .icon-btn         .icon-btn-primary  .icon-btn-destructive
-.input-field      .select-field      .form-label        .section-label
-.badge-primary    .badge-accent      .badge-muted       .badge-success   .badge-destructive
+.input-field      .select-field      .form-label        .form-hint       .form-error     .section-label
+.badge-success    .badge-warning     .badge-info        .badge-destructive
+.badge-muted      .badge-primary     .badge-highlight   (.badge-accent = alias of highlight)
 .card-base        .card-elevated     .card-padded       .card-interactive
 .modal-overlay    .modal-panel       .modal-header      .modal-body      .modal-footer
 .table-th         .table-td          .table-row
-.page-container   .icon-badge        .stat-card         .mobile-card
+.page-container   .page-title        .page-subtitle     .icon-badge      .stat-card      .mobile-card
 ```
 
 ## Code Conventions

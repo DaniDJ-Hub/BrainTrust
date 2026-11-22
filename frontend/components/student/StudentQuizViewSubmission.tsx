@@ -216,7 +216,7 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
           submission.status === 'GRADED'
             ? 'bg-primary/10 text-primary'
             : submission.status === 'LATE_SUBMITTED'
-            ? 'bg-accent/20 text-accent-foreground'
+            ? 'bg-highlight/20 text-highlight-foreground'
             : 'bg-muted text-muted-foreground'
         }`}>
           {submission.status === 'GRADED' ? '✓ Calificado' :
@@ -224,7 +224,7 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
         </span>
 
         {!canViewResults && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-xl text-xs font-semibold text-accent-foreground">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-highlight/10 border border-highlight/30 rounded-xl text-xs font-semibold text-highlight-foreground">
             <EyeOff className="w-3.5 h-3.5" />
             Las respuestas correctas no están disponibles para este cuestionario
           </div>
@@ -245,9 +245,9 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
         </div>
 
         {submission.teacherFeedback && (
-          <div className="p-4 bg-accent/10 border border-accent/30 rounded-2xl max-w-2xl mx-auto text-left">
+          <div className="p-4 bg-highlight/10 border border-highlight/30 rounded-2xl max-w-2xl mx-auto text-left">
             <div className="flex items-start gap-2">
-              <Award className="w-4 h-4 text-accent-foreground flex-shrink-0 mt-0.5" />
+              <Award className="w-4 h-4 text-highlight-foreground flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-xs font-semibold text-foreground mb-1">Retroalimentación del Profesor:</p>
                 <p className="text-xs text-muted-foreground whitespace-pre-wrap">
@@ -283,8 +283,8 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
                 <p className="text-2xl font-bold text-destructive">{incorrectAnswers}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">Incorrectas</p>
               </div>
-              <div className="bg-accent/10 rounded-xl border border-accent/20 p-3 text-center">
-                <p className="text-2xl font-bold text-accent-foreground">{pendingReview}</p>
+              <div className="bg-highlight/10 rounded-xl border border-highlight/20 p-3 text-center">
+                <p className="text-2xl font-bold text-highlight-foreground">{pendingReview}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">Pendientes de Revisión</p>
               </div>
             </div>
@@ -328,7 +328,7 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
                 <div
                   key={question.id}
                   className={`rounded-2xl border-l-4 border-t border-r border-b border-border p-5 ${
-                    needsReview ? 'border-l-accent'      :
+                    needsReview ? 'border-l-highlight'      :
                     isCorrect   ? 'border-l-primary'     :
                     'border-l-destructive'
                   }`}
@@ -339,7 +339,7 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
                         {index + 1}
                       </div>
                       {needsReview
-                        ? <HelpCircle className="w-4 h-4 text-accent-foreground" />
+                        ? <HelpCircle className="w-4 h-4 text-highlight-foreground" />
                         : isCorrect
                         ? <CheckCircle className="w-4 h-4 text-primary" />
                         : <XCircle className="w-4 h-4 text-destructive" />}
@@ -361,7 +361,7 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
                           {detailedAnswer.maxPoints} {detailedAnswer.maxPoints === 1 ? 'punto' : 'puntos'}
                         </span>
                         {needsReview ? (
-                          <span className="px-2 py-0.5 rounded-md bg-accent/20 text-accent-foreground text-xs font-semibold">
+                          <span className="px-2 py-0.5 rounded-md bg-highlight/20 text-highlight-foreground text-xs font-semibold">
                             Pendiente de Revisión
                           </span>
                         ) : (
@@ -390,7 +390,7 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
                       </p>
                       <div className={`p-4 rounded-xl border-2 ${
                         needsReview
-                          ? 'bg-accent/10 border-accent/30'
+                          ? 'bg-highlight/10 border-highlight/30'
                           : isCorrect
                           ? 'bg-primary/5 border-primary/30'
                           : 'bg-destructive/5 border-destructive/20'
@@ -407,8 +407,8 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
                     </div>
 
                     {needsReview && (
-                      <div className="p-3 bg-accent/10 border border-accent/30 rounded-xl flex items-start gap-2">
-                        <AlertCircle className="w-4 h-4 text-accent-foreground flex-shrink-0 mt-0.5" />
+                      <div className="p-3 bg-highlight/10 border border-highlight/30 rounded-xl flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 text-highlight-foreground flex-shrink-0 mt-0.5" />
                         <div>
                           <p className="text-xs font-semibold text-foreground">
                             Esta respuesta está pendiente de revisión del profesor
@@ -516,7 +516,7 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
                         <p className="section-label">
                           Retroalimentación del Profesor:
                         </p>
-                        <div className="p-4 bg-accent/10 border-2 border-accent/30 rounded-xl">
+                        <div className="p-4 bg-highlight/10 border-2 border-highlight/30 rounded-xl">
                           <p className="text-xs text-foreground whitespace-pre-wrap">
                             {detailedAnswer.feedback}
                           </p>
@@ -526,7 +526,7 @@ export function StudentQuizView({ quiz, onExit }: StudentQuizViewProps) {
 
                     <div className="flex items-center justify-between pt-3 border-t border-border">
                       <div className={`flex items-center gap-1.5 text-xs font-semibold ${
-                        needsReview ? 'text-accent-foreground' :
+                        needsReview ? 'text-highlight-foreground' :
                         isCorrect   ? 'text-primary'           :
                         'text-destructive'
                       }`}>
