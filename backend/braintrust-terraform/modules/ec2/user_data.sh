@@ -145,8 +145,9 @@ services:
     env_file:
       - /home/ec2-user/.env
     environment:
-      # Igual que el Dockerfile, pero con 65% de RAM para el heap (antes 75%)
-      JAVA_OPTS: "-Djava.security.egd=file:/dev/./urandom -XX:+UseContainerSupport -XX:MaxRAMPercentage=65.0 -XX:+UseG1GC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8"
+      # Igual que el Dockerfile, pero con 65% de RAM para el heap (antes 75%).
+      # user.timezone: due_date se guarda en hora de Mexico sin zona; la JVM debe usar la misma.
+      JAVA_OPTS: "-Djava.security.egd=file:/dev/./urandom -XX:+UseContainerSupport -XX:MaxRAMPercentage=65.0 -XX:+UseG1GC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=America/Mexico_City"
     volumes:
       - app_storage:/app/storage
       - app_logs:/app/logs
