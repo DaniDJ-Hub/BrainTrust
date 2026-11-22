@@ -48,6 +48,7 @@ public class AssignmentEntityMapper {
             entity.setActive(domain.isActive());
             entity.setTargetType(domain.getTargetType().name());
             entity.setSubmissionFormat(domain.getSubmissionFormat().name());
+            entity.setAllowLateSubmissions(domain.isAllowLateSubmissions());
             // DO NOT touch documents or links here  handled by syncDocuments/syncLinks
 
         // Use syncDocuments/syncLinks  mutates the SAME collection Hibernate tracks
