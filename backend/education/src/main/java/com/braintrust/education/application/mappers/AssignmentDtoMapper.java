@@ -49,7 +49,8 @@ public class AssignmentDtoMapper {
                 submissionFormat,
                 attachmentDTOs,
                 assignment.getLinks(),
-                studentSubmissionStatus
+                studentSubmissionStatus,
+                assignment.isAllowLateSubmissions()
         );
     }
 

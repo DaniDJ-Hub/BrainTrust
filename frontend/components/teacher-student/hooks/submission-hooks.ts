@@ -3,6 +3,7 @@
 
 import { studentSubmissionKeys } from "@/app/infraestructure/api/course/student/student-key";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 
 import {
@@ -30,11 +31,27 @@ export function useStudentTaskSubmission(
   });
 }
 
+const SUBMISSION_RULE_MESSAGES = [
+  "La fecha límite pasó",
+  "La tarea está cerrada",
+];
+
+const toSubmissionToastMessage = (message: string): string =>
+  SUBMISSION_RULE_MESSAGES.some((prefix) => message.startsWith(prefix))
+    ? message
+    : "No se pudo enviar la tarea. Inténtalo de nuevo.";
+
 export function useTaskSubmission() {
   const queryClient = useQueryClient();
 
   const submitTaskMutation = useMutation({
-    mutationFn: submitTask,
+    mutationFn: async (params: Parameters<typeof submitTask>[0]) => {
+      const result = await submitTask(params);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      return result.submission;
+    },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: studentSubmissionKeys.taskSubmission(
@@ -45,6 +62,7 @@ export function useTaskSubmission() {
     },
     onError: (error: Error) => {
       console.error("Error submitting task:", error.message);
+      toast.error(toSubmissionToastMessage(error.message));
     },
   });
 

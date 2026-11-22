@@ -76,6 +76,10 @@ export const TaskSubmissionView: React.FC<TaskSubmissionViewProps> = ({
   const isLate = existingSubmission?.status === 'LATE_SUBMITTED';
   const isSubmitted = existingSubmission?.status === 'SUBMITTED' || existingSubmission?.status === 'LATE_SUBMITTED' || existingSubmission?.status === 'GRADED';
   const isGraded = existingSubmission?.status === 'GRADED';
+  const isClosedForLate =
+    !!assignment.dueDate &&
+    new Date(assignment.dueDate).getTime() < Date.now() &&
+    !assignment.allowLateSubmissions;
   const hasAIResult = existingSubmission?.aiAnalysis !== undefined;
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -683,7 +687,13 @@ return (
                   </div>
                 )}
 
-                {!isSubmitted && (
+                {!isSubmitted && isClosedForLate && (
+                  <p className="w-full text-center py-3.5 rounded-xl border border-border text-sm font-medium text-destructive">
+                    La fecha límite pasó y no se aceptan entregas tardías.
+                  </p>
+                )}
+
+                {!isSubmitted && !isClosedForLate && (
                   <button
                     onClick={handleSubmitConfirm}
                     disabled={isSubmitting || (!content.trim() && files.length === 0)}

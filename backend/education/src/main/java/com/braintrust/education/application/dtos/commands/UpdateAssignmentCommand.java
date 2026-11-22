@@ -1,5 +1,6 @@
 package com.braintrust.education.application.dtos.commands;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -18,5 +19,10 @@ public record UpdateAssignmentCommand(
         @Size(min = 10, message = "Instructions must be at least 10 characters")
         String instructions,
 
-        String submissionFormat
+        String submissionFormat,
+
+        @Min(value = 1, message = "Max points must be at least 1")
+        Integer maxPoints,
+
+        Boolean allowLateSubmissions
 ) {}

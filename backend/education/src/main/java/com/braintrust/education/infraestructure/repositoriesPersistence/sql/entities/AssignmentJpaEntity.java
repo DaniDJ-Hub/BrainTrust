@@ -49,6 +49,9 @@ public class AssignmentJpaEntity {
     @Column(name = "submission_format", length = 20, nullable = false)
     private String submissionFormat = "DIGITAL";
 
+    @Column(name = "allow_late_submissions", nullable = false)
+    private boolean allowLateSubmissions = true;
+
 //    @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 //    private List<DocumentJpaEntity> documents = new ArrayList<>();
 
@@ -253,6 +256,9 @@ public class AssignmentJpaEntity {
             links.forEach(l -> l.setAssignment(this));
         }
     }
+
+    public boolean isAllowLateSubmissions() { return allowLateSubmissions; }
+    public void setAllowLateSubmissions(boolean allowLateSubmissions) { this.allowLateSubmissions = allowLateSubmissions; }
 
     public String getTargetType() { return targetType; }
     public void setTargetType(String targetType) {

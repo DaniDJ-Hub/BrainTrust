@@ -168,6 +168,10 @@ export async function fetchSubmissionById(
 }
 
 
+export type SubmitTaskResult =
+  | { ok: true; submission: Submission }
+  | { ok: false; message: string };
+
 export async function submitTask(params: {
   assignmentId: string;
   studentId: string;
@@ -175,9 +179,9 @@ export async function submitTask(params: {
   attachments: File[];
   submissionType: "INDIVIDUAL" | "TEAM";
   groupId?: string;
-}): Promise<Submission> {
+}): Promise<SubmitTaskResult> {
   if (params.submissionType === "TEAM" && !params.groupId) {
-    throw new Error("Group ID is required for team submissions");
+    return { ok: false, message: "Group ID is required for team submissions" };
   }
 
   try {
@@ -209,9 +213,15 @@ export async function submitTask(params: {
       );
     }
 
-    return mapSubmissionFromBackend(response.data);
+    return { ok: true, submission: mapSubmissionFromBackend(response.data) };
   } catch (error) {
-    return handleApiError(error);
+    const message = axios.isAxiosError(error)
+      ? error.response?.data?.message || error.message
+      : error instanceof Error
+        ? error.message
+        : String(error);
+    console.error("Submit task failed:", message);
+    return { ok: false, message };
   }
 }
 

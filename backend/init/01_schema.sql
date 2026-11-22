@@ -294,6 +294,7 @@ CREATE TABLE "public"."assignments" (
     "active" BOOLEAN NOT NULL,
     "submission_format" CHARACTER VARYING NOT NULL DEFAULT 'DIGITAL',
     "target_type" CHARACTER VARYING NOT NULL DEFAULT 'INDIVIDUAL',
+    "allow_late_submissions" BOOLEAN NOT NULL DEFAULT TRUE,
     PRIMARY KEY ("id"),
     CONSTRAINT "fk_assignments_course" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "fk_assignments_unit" FOREIGN KEY ("unit_id") REFERENCES "public"."course_units"("id") ON DELETE SET NULL ON UPDATE CASCADE

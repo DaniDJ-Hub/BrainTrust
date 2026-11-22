@@ -35,5 +35,6 @@ public record CreateAssignmentFrontendDTO(
         List<FrontendDocumentDTO> attachments,
         List<String> links,
         String targetType,
-        String submissionFormat
+        String submissionFormat,
+        Boolean allowLateSubmissions
 ) {}

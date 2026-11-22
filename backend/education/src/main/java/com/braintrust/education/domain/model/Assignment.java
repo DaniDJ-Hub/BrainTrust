@@ -24,6 +24,7 @@ public class Assignment extends AggregateRoot<AssignmentId> {
     private boolean active;
     private AssignmentTargetType targetType;
     private SubmissionFormat submissionFormat;
+    private boolean allowLateSubmissions = true;
     private static final int MAX_ATTACHMENTS = 10;
     private static final int MAX_LINKS = 10;
 
@@ -301,30 +302,36 @@ public class Assignment extends AggregateRoot<AssignmentId> {
     //  Business Logic 
 
     public Submission submitWork(UserId studentId, String content, List<Document> submissionAttachments) {
-        if (!this.active && dueDate != null && LocalDateTime.now().isAfter(dueDate)) {
-            throw new IllegalStateException("Assignment is closed and cannot accept submissions");
-        }
+        ensureCanAcceptSubmissions();
         SubmissionStatus status = determineSubmissionStatus();
         Submission submission = Submission.create(this.id, studentId, content, submissionAttachments, status);
         submissions.add(submission);
         return submission;
     }
 
-    private SubmissionStatus determineSubmissionStatus() {
-        if (this.active) {
-            if (dueDate != null && LocalDateTime.now().isAfter(dueDate)) {
-                return SubmissionStatus.LATE_SUBMITTED;
-            }
-            return SubmissionStatus.SUBMITTED;
-        }
-        if (dueDate == null || LocalDateTime.now().isBefore(dueDate)) {
-            return SubmissionStatus.SUBMITTED;
-        }
-        throw new IllegalStateException("Invalid assignment state for submission");
+    public boolean isPastDue() {
+        return dueDate != null && LocalDateTime.now().isAfter(dueDate);
+    }
+
+    public SubmissionStatus determineSubmissionStatus() {
+        return isPastDue() ? SubmissionStatus.LATE_SUBMITTED : SubmissionStatus.SUBMITTED;
     }
 
     public boolean canAcceptSubmissions() {
-        return active || dueDate == null || LocalDateTime.now().isBefore(dueDate);
+        return active && (!isPastDue() || allowLateSubmissions);
+    }
+
+    public void ensureCanAcceptSubmissions() {
+        if (!active) {
+            throw new IllegalStateException("La tarea está cerrada y no acepta entregas");
+        }
+        if (isPastDue() && !allowLateSubmissions) {
+            throw new IllegalStateException("La fecha límite pasó y esta tarea no acepta entregas tardías");
+        }
+    }
+
+    public void updateMaxPoints(int maxPoints) {
+        this.maxScore = new Score(0, maxPoints);
     }
 
     public void extendDueDate(LocalDateTime newDueDate) {
@@ -373,4 +380,6 @@ public class Assignment extends AggregateRoot<AssignmentId> {
     public boolean isActive() { return active; }
     public AssignmentTargetType getTargetType() { return targetType; }
     public SubmissionFormat getSubmissionFormat() { return submissionFormat; }
+    public boolean isAllowLateSubmissions() { return allowLateSubmissions; }
+    public void setAllowLateSubmissions(boolean allowLateSubmissions) { this.allowLateSubmissions = allowLateSubmissions; }
 }

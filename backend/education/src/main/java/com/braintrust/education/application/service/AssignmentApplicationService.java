@@ -24,6 +24,7 @@ import com.braintrust.education.domain.valueobjects.AssignmentId;
 import com.braintrust.education.domain.valueobjects.CourseId;
 import com.braintrust.education.domain.valueobjects.UnitId;
 import com.braintrust.education.domain.valueobjects.Document;        // Explicit: from valueobjects
+import com.braintrust.education.domain.valueobjects.Grade;
 import com.braintrust.identity.domain.valueobjects.UserId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +32,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -165,6 +169,9 @@ public class AssignmentApplicationService implements AssignmentService {
                     targetType,
                     submissionFormat
             );
+            if (command.allowLateSubmissions() != null) {
+                assignment.setAllowLateSubmissions(command.allowLateSubmissions());
+            }
 
             Assignment savedAssignment = assignmentRepository.save(assignment);
 
@@ -313,13 +320,39 @@ public class AssignmentApplicationService implements AssignmentService {
                     submissionFormat
             );
 
+            if (command.maxPoints() != null
+                    && command.maxPoints() != assignment.getMaxScore().getMaxPoints()) {
+                validateMaxPointsNotBelowGrades(assignmentId, command.maxPoints());
+                assignment.updateMaxPoints(command.maxPoints());
+            }
+            if (command.allowLateSubmissions() != null) {
+                assignment.setAllowLateSubmissions(command.allowLateSubmissions());
+            }
+
             assignmentRepository.save(assignment);
-            log.info("Assignment {} details updated", assignmentId.getValue());
+            log.info("Assignment {} details updated maxPoints={} allowLateSubmissions={}",
+                    assignmentId.getValue(), assignment.getMaxScore().getMaxPoints(),
+                    assignment.isAllowLateSubmissions());
 
         } catch (Exception e) {
             log.error("Failed to update assignment {}: {}",
                     assignmentId.getValue(), e.getMessage(), e);
             throw e;
+        }
+    }
+
+    private void validateMaxPointsNotBelowGrades(AssignmentId assignmentId, int newMaxPoints) {
+        BigDecimal highestGrade = submissionRepository.findByAssignmentId(assignmentId).stream()
+                .map(Submission::getGrade)
+                .filter(Objects::nonNull)
+                .map(Grade::getValue)
+                .max(Comparator.naturalOrder())
+                .orElse(BigDecimal.ZERO);
+
+        if (highestGrade.compareTo(BigDecimal.valueOf(newMaxPoints)) > 0) {
+            throw new IllegalArgumentException(
+                    "No se puede bajar el puntaje máximo a " + newMaxPoints
+                            + ": ya hay una calificación de " + highestGrade.stripTrailingZeros().toPlainString());
         }
     }
 

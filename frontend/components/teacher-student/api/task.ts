@@ -30,6 +30,7 @@ interface AssignmentDTO {
   isTeamAssignment: boolean;
   attachments: DocumentDTO[];
   studentSubmissionStatus?: string | null;
+  allowLateSubmissions?: boolean;
 }
 
 interface DocumentDTO {
@@ -104,7 +105,7 @@ async function mapAssignmentFromBackend(dto: AssignmentDTO): Promise<Assignment>
     maxScore: { value: dto.maxPoints, maxPoints: dto.maxPoints },
     instructions: dto.instructions,
     submissions,
-    allowLateSubmissions: dto.canAcceptSubmissions,
+    allowLateSubmissions: dto.allowLateSubmissions ?? true,
     idUser: "current-user"
   };
 }
