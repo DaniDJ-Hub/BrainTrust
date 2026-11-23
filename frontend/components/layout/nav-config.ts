@@ -20,7 +20,7 @@ const ADMIN_NAV: NavItem[] = [
   { label: "Gestión de Usuarios", href: "/admin/users", icon: UserCog, permission: PERMISSIONS.USER_MANAGEMENT },
   { label: "Gestión de Cursos", href: "/admin/courses", icon: Library, permission: PERMISSIONS.COURSE_MANAGEMENT },
   { label: "Datos Personales", href: "/admin/personal", icon: IdCard, permission: PERMISSIONS.PERSONAL_DATA_MANAGEMENT },
-  { label: "Gráficos y Estadísticas", href: "/admin/statistics", icon: BarChart3, permission: PERMISSIONS.CATALOG_MANAGEMENT },
+  { label: "Gráficos y Estadísticas", href: "/admin/statistics", icon: BarChart3, permission: PERMISSIONS.STADISTICS },
 ]
 
 export function getNavItems(role: AppRole): NavItem[] {
