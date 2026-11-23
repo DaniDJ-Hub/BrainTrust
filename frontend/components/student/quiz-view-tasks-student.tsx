@@ -10,7 +10,8 @@ import { TaskAIAnalysis } from './task/task-ai-analysis';
 import { TaskResourcesCard, TaskSummaryCard } from './task/task-overview';
 import { TaskSubmissionForm } from './task/task-submission-form';
 import { TaskSidebar } from './task/task-sidebar';
-import { TaskExitDialog, TaskSubmitDialog } from './task/task-dialogs';
+import { TaskEmptyDialog, TaskExitDialog, TaskSubmitDialog } from './task/task-dialogs';
+import { PageHeader } from '@/components/common';
 
 interface TaskSubmissionViewProps {
   assignment: Assignment;
@@ -22,6 +23,8 @@ interface TaskSubmissionViewProps {
   onDownloadAttachment: (attachment: Document) => void;
   isSubmitting?: boolean;
   onExit?: () => void;
+  /** "h2" when rendered inside an overlay on top of a page that already has an h1. */
+  headingLevel?: "h1" | "h2";
 }
 
 export const TaskSubmissionView: React.FC<TaskSubmissionViewProps> = ({
@@ -30,13 +33,15 @@ export const TaskSubmissionView: React.FC<TaskSubmissionViewProps> = ({
   onSubmit,
   onDownloadAttachment,
   isSubmitting = false,
-  onExit
+  onExit,
+  headingLevel = "h1"
 }) => {
   const [content, setContent] = useState(existingSubmission?.content || '');
   const [files, setFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
+  const [showEmptyConfirm, setShowEmptyConfirm] = useState(false);
   const [showAllLinks, setShowAllLinks] = useState(false);
   const [showAllAttachments, setShowAllAttachments] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -71,12 +76,14 @@ export const TaskSubmissionView: React.FC<TaskSubmissionViewProps> = ({
 
   const handleSubmit = async () => {
     if (!content.trim() && files.length === 0) {
-      const shouldContinue = window.confirm(
-        'Por favor, proporciona contenido escrito o adjunta archivos. ¿Deseas continuar sin enviar?'
-      );
-      if (!shouldContinue) return;
+      setShowSubmitConfirm(false);
+      setShowEmptyConfirm(true);
+      return;
     }
+    await submitNow();
+  };
 
+  const submitNow = async () => {
     try {
       await onSubmit({ content, attachments: files });
       setShowSubmitConfirm(false);
@@ -104,23 +111,25 @@ export const TaskSubmissionView: React.FC<TaskSubmissionViewProps> = ({
   const displayedAttachments = showAllAttachments ? assignment.attachments : assignment.attachments.slice(0, 3);
 return (
   <>
-    <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
+    <div className="bg-background p-4 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
 
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight truncate">
-              {assignment.title}
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">{assignment.description}</p>
-          </div>
-          <button
-            onClick={() => setShowExitConfirm(true)}
-            className="p-2 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all flex-shrink-0"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
+        <PageHeader
+          as={headingLevel}
+          eyebrow="Tarea"
+          title={assignment.title}
+          actions={
+            <button
+              type="button"
+              data-overlay-close
+              onClick={() => setShowExitConfirm(true)}
+              className="btn-secondary"
+            >
+              <X className="size-4" aria-hidden="true" />
+              Salir
+            </button>
+          }
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
@@ -187,8 +196,13 @@ return (
       open={showSubmitConfirm}
       onOpenChange={setShowSubmitConfirm}
       files={files}
-      isSubmitting={isSubmitting}
       onConfirm={handleSubmit}
+    />
+
+    <TaskEmptyDialog
+      open={showEmptyConfirm}
+      onOpenChange={setShowEmptyConfirm}
+      onConfirm={submitNow}
     />
   </>
 );

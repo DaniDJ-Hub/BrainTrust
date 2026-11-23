@@ -1,5 +1,6 @@
 import React from 'react';
-import { AlertTriangle, Brain, Info } from "lucide-react";
+import { Brain, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Submission } from '@/app/shared/models/assignment.model';
 import { formatDate } from './task-utils';
 
@@ -7,120 +8,89 @@ interface TaskAIAnalysisProps {
   aiResult: NonNullable<Submission['aiAnalysis']>;
 }
 
+const CONFIDENCE: Record<string, { label: string; className: string }> = {
+  HIGH: { label: 'Alta', className: 'badge-destructive' },
+  MEDIUM: { label: 'Media', className: 'badge-warning' },
+  LOW: { label: 'Baja', className: 'badge-info' },
+};
+
 export const TaskAIAnalysis: React.FC<TaskAIAnalysisProps> = ({ aiResult }) => {
   const probability = parseFloat(aiResult.probability);
   const percentage = parseFloat(aiResult.percentage);
   const isLikelyAI = aiResult.isLikelyAI;
+  const confidence = CONFIDENCE[aiResult.confidenceLevel] ?? CONFIDENCE.LOW;
+  const barTone = percentage < 30 ? 'bg-success' : percentage < 70 ? 'bg-warning' : 'bg-destructive';
 
   return (
-  <div className={`bg-card rounded-2xl border-l-4 border-t border-r border-b border-border shadow-sm overflow-hidden ${
-    isLikelyAI ? 'border-l-destructive' : 'border-l-primary'
-  }`}>
-
-    <div className="px-5 py-4 sm:px-6 border-b border-border">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="w-8 h-8 rounded-xl flex items-center justify-center bg-primary/10 flex-shrink-0">
-          <Brain className="w-4 h-4 text-primary" />
+    <section aria-labelledby="task-ai-title" className="card-base overflow-hidden">
+      <header className="flex flex-wrap items-center gap-2 border-b border-border px-5 py-4 sm:px-6">
+        <span className="icon-badge"><Brain className="size-4" aria-hidden="true" /></span>
+        <h2 id="task-ai-title" className="text-subheading text-foreground">Análisis de detección de IA</h2>
+        <span className={isLikelyAI ? 'badge-destructive' : 'badge-success'}>
+          {isLikelyAI ? 'Contenido de IA detectado' : 'Contenido humano'}
         </span>
-        <h3 className="text-base font-bold text-foreground tracking-tight">
-          Análisis de Detección de IA
-        </h3>
-        <span className={`px-2 py-0.5 rounded-md text-xs font-semibold ${
-          isLikelyAI
-            ? 'bg-destructive/10 text-destructive'
-            : 'bg-primary/10 text-primary'
-        }`}>
-          {isLikelyAI ? 'Contenido de IA Detectado' : 'Contenido Humano'}
-        </span>
-      </div>
-    </div>
+      </header>
 
-    <div className="px-5 py-5 sm:px-6 space-y-5">
-
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="section-label">
-            Puntaje de Probabilidad de IA
-          </span>
-          <span className="text-sm font-bold text-foreground tabular-nums">{percentage}%</span>
-        </div>
-        <div className="w-full bg-muted/50 rounded-full h-2">
+      <div className="space-y-5 px-5 py-5 sm:px-6">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="section-label">Probabilidad de IA</span>
+            <span className="text-body font-semibold text-foreground tabular-nums">{percentage}%</span>
+          </div>
           <div
-            className={`h-2 rounded-full transition-all ${
-              percentage < 30 ? 'bg-primary' :
-              percentage < 70 ? 'bg-highlight'  :
-              'bg-destructive'
-            }`}
-            style={{ width: `${percentage}%` }}
-          />
-        </div>
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>0% (Humano)</span>
-          <span>50%</span>
-          <span>100% (IA)</span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-
-        <div className="flex items-center justify-between bg-muted/30 rounded-xl px-4 py-3 border border-border">
-          <span className="text-xs font-semibold text-muted-foreground">Nivel de Confianza</span>
-          <span className={`px-2 py-0.5 rounded-md text-xs font-bold ${
-            aiResult.confidenceLevel === 'HIGH'   ? 'bg-destructive/10 text-destructive' :
-            aiResult.confidenceLevel === 'MEDIUM' ? 'bg-highlight/20 text-highlight-foreground' :
-            'bg-primary/10 text-primary'
-          }`}>
-            {aiResult.confidenceLevel === 'HIGH' ? 'ALTO' : aiResult.confidenceLevel === 'MEDIUM' ? 'MEDIO' : 'BAJO'}
-          </span>
+            className="h-2 w-full rounded-full bg-muted"
+            role="meter"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={percentage}
+            aria-label="Probabilidad de contenido generado por IA"
+          >
+            <div className={cn('h-2 rounded-full transition-[width]', barTone)} style={{ width: `${percentage}%` }} />
+          </div>
+          <div className="flex justify-between text-caption font-normal text-muted-foreground">
+            <span>0% (humano)</span>
+            <span>50%</span>
+            <span>100% (IA)</span>
+          </div>
         </div>
 
-        <div className="flex items-center justify-between bg-muted/30 rounded-xl px-4 py-3 border border-border">
-          <span className="text-xs font-semibold text-muted-foreground">Probabilidad</span>
-          <span className="text-sm font-bold text-foreground tabular-nums">
-            {probability.toFixed(4)}
-          </span>
-        </div>
+        <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="flex items-center justify-between rounded-control border border-border bg-muted/50 px-4 py-3">
+            <dt className="text-caption text-muted-foreground">Nivel de confianza</dt>
+            <dd><span className={confidence.className}>{confidence.label}</span></dd>
+          </div>
+          <div className="flex items-center justify-between rounded-control border border-border bg-muted/50 px-4 py-3">
+            <dt className="text-caption text-muted-foreground">Probabilidad</dt>
+            <dd className="text-body font-semibold text-foreground tabular-nums">{probability.toFixed(4)}</dd>
+          </div>
+          <div className="flex items-center justify-between gap-3 rounded-control border border-border bg-muted/50 px-4 py-3">
+            <dt className="text-caption text-muted-foreground">Modelo</dt>
+            <dd className="truncate text-body font-medium text-foreground">{aiResult.modelUsed}</dd>
+          </div>
+          <div className="flex items-center justify-between gap-3 rounded-control border border-border bg-muted/50 px-4 py-3">
+            <dt className="text-caption text-muted-foreground">Fecha</dt>
+            <dd className="text-caption font-normal text-foreground">{formatDate(aiResult.analyzedAt)}</dd>
+          </div>
+        </dl>
 
-        <div className="flex items-center justify-between bg-muted/30 rounded-xl px-4 py-3 border border-border">
-          <span className="text-xs font-semibold text-muted-foreground">Modelo de Detección</span>
-          <span className="text-sm font-semibold text-foreground">{aiResult.modelUsed}</span>
-        </div>
+        <p className="flex flex-wrap items-center gap-2 text-caption font-normal text-muted-foreground">
+          ID de análisis:
+          <code className="rounded-tag bg-muted px-2 py-0.5 font-mono text-foreground">{aiResult.analysisId}</code>
+        </p>
 
-        <div className="flex items-center justify-between bg-muted/30 rounded-xl px-4 py-3 border border-border">
-          <span className="text-xs font-semibold text-muted-foreground">Fecha de Análisis</span>
-          <span className="text-xs text-foreground">{formatDate(aiResult.analyzedAt)}</span>
-        </div>
-
-      </div>
-
-      <div className="flex items-center gap-2 bg-muted/30 rounded-xl px-4 py-3 border border-border">
-        <Info className="w-4 h-4 text-primary flex-shrink-0" />
-        <span className="text-xs font-semibold text-muted-foreground">ID de Análisis:</span>
-        <code className="text-xs bg-muted px-2 py-0.5 rounded-md text-foreground font-mono">
-          {aiResult.analysisId}
-        </code>
-      </div>
-
-      <div className="p-4 rounded-2xl bg-highlight/10 border border-highlight/30">
-        <div className="flex items-start gap-3">
-          <AlertTriangle className="w-4 h-4 text-highlight-foreground flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 rounded-control border border-info/30 bg-info-soft p-4 text-info-soft-foreground">
+          <Info className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
           <div className="space-y-2">
-            <h4 className="text-sm font-semibold text-foreground">
-              Cómo interpretar los resultados de detección de IA
-            </h4>
-            <ul className="text-xs text-muted-foreground space-y-1">
-              <li><span className="font-semibold text-foreground">0–30%:</span> Contenido probablemente escrito por humanos</li>
-              <li><span className="font-semibold text-foreground">30–70%:</span> Origen mixto o incierto</li>
-              <li><span className="font-semibold text-foreground">70–100%:</span> Alta probabilidad de contenido generado por IA</li>
+            <p className="text-body font-semibold">Cómo interpretar el resultado</p>
+            <ul className="space-y-1 text-caption font-normal">
+              <li><strong>0–30%:</strong> probablemente escrito por una persona</li>
+              <li><strong>30–70%:</strong> origen mixto o incierto</li>
+              <li><strong>70–100%:</strong> alta probabilidad de contenido generado por IA</li>
             </ul>
-            <p className="text-xs text-muted-foreground/70 mt-1">
-              Nota: Las herramientas de detección de IA no son 100% precisas y deben usarse solo como referencia.
-            </p>
+            <p className="text-caption font-normal">La detección de IA no es 100% precisa; úsala solo como referencia.</p>
           </div>
         </div>
       </div>
-
-    </div>
-  </div>
+    </section>
   );
 };

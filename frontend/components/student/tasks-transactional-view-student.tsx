@@ -1,20 +1,12 @@
 ﻿"use client";
 import React, { useState } from "react";
+import { BookOpen, CheckCircle2, Monitor } from "lucide-react";
 import { getCloudinaryDownloadUrl } from "@/app/utils/cloudinary/cloudinary-pdf";
 import { TaskSubmissionView } from "@/components/student/quiz-view-tasks-student";
 import { useStudentTaskSubmission } from "@/components/teacher-student/hooks/submission-hooks";
 import { Assignment } from "@/app/domain/entities";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { BookOpen, Monitor, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { ConfirmDialog } from "@/components/common";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface StudentTaskViewProps {
   assignment: Assignment;
@@ -25,7 +17,15 @@ interface StudentTaskViewProps {
   }) => Promise<void>;
   onExit: () => void;
   isSubmitting: boolean;
+  /** "h2" when rendered inside an overlay. */
+  headingLevel?: "h1" | "h2";
 }
+
+const NOTEBOOK_CHECKLIST = [
+  "Completaste todo el trabajo en tu cuaderno",
+  "Tu cuaderno está listo para que lo revise el profesor",
+  "Revisaste tu trabajo una vez más",
+];
 
 export function VistaTareaEstudiante({
   assignment,
@@ -33,6 +33,7 @@ export function VistaTareaEstudiante({
   onSubmit,
   onExit,
   isSubmitting,
+  headingLevel = "h1",
 }: StudentTaskViewProps) {
   const { data: existingSubmission, isLoading } = useStudentTaskSubmission(
     assignment.id,
@@ -61,138 +62,88 @@ export function VistaTareaEstudiante({
 
   const handleConfirmSubmission = async () => {
     if (pendingSubmission) {
-      setShowConfirmModal(false);
       await onSubmit(pendingSubmission);
       setPendingSubmission(null);
     }
   };
 
-  const handleCancelSubmission = () => {
-    setShowConfirmModal(false);
-    setPendingSubmission(null);
+  const handleConfirmOpenChange = (open: boolean) => {
+    setShowConfirmModal(open);
+    if (!open) setPendingSubmission(null);
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="space-y-4 p-4 sm:p-6" aria-busy="true" aria-label="Cargando tarea">
+        <Skeleton className="h-16 w-full rounded-control" />
+        <Skeleton className="h-10 w-2/3" />
+        <div className="grid gap-6 lg:grid-cols-4">
+          <Skeleton className="h-96 rounded-surface lg:col-span-3" />
+          <Skeleton className="h-64 rounded-surface" />
+        </div>
       </div>
     );
   }
-return (
-  <>
-    <div className="space-y-4">
-      {isNotebookSubmission ? (
-        <div className="flex items-start gap-3 p-4 rounded-2xl border border-highlight/30 bg-highlight/5">
-          <BookOpen className="w-4 h-4 text-highlight-foreground flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-semibold text-foreground mb-1">
-              📓 Envío en Cuaderno Requerido
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Esta tarea requiere que entregues tu trabajo en un cuaderno físico.
-              Por favor, asegúrate de haber completado tu trabajo en tu cuaderno
-              antes de marcar esta tarea como enviada. Tu profesor revisará tu
-              cuaderno en clase.
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="flex items-start gap-3 p-4 rounded-2xl border border-primary/20 bg-primary/5">
-          <Monitor className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-semibold text-foreground mb-1">
-              💻 Envío Digital
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Entrega tu trabajo digitalmente subiendo archivos o ingresando tu
-              respuesta a continuación.
-            </p>
-          </div>
-        </div>
-      )}
 
-      <TaskSubmissionView
-        assignment={assignment}
-        existingSubmission={existingSubmission || undefined}
-        onSubmit={handleSubmitAttempt}
-        onDownloadAttachment={(attachment) => {
-          if (attachment.storagePath) window.open(getCloudinaryDownloadUrl(attachment.storagePath), "_blank");
-        }}
-        isSubmitting={isSubmitting}
-        onExit={onExit}
-      />
-    </div>
-
-    <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
-      <DialogContent className="bg-card rounded-3xl border border-border shadow-2xl sm:max-w-md p-0 overflow-hidden">
-
-        <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
-          <span className="w-8 h-8 rounded-xl bg-highlight/10 flex items-center justify-center flex-shrink-0">
-            <AlertTriangle className="w-4 h-4 text-highlight-foreground" />
-          </span>
-          <h2 className="text-base font-bold text-foreground tracking-tight">
-            Confirmar Envío de Cuaderno
-          </h2>
-        </div>
-
-        <div className="px-6 py-5 space-y-4">
-          <div className="p-4 bg-highlight/5 rounded-2xl border border-highlight/30">
-            <div className="flex items-start gap-3">
-              <BookOpen className="w-5 h-5 text-highlight-foreground flex-shrink-0 mt-0.5" />
-              <div className="space-y-2">
-                <p className="text-sm font-semibold text-foreground">
-                  Esta es una tarea basada en cuaderno
+  return (
+    <>
+      <div className="space-y-4">
+        <div className="px-4 pt-4 sm:px-6 sm:pt-6">
+          {isNotebookSubmission ? (
+            <div className="flex items-start gap-3 rounded-control border border-warning/30 bg-warning-soft p-4 text-warning-soft-foreground">
+              <BookOpen className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+              <div className="space-y-1">
+                <p className="text-body font-semibold">Entrega en cuaderno</p>
+                <p className="text-caption font-normal">
+                  Esta tarea se entrega en tu cuaderno físico. Termina el trabajo en tu cuaderno antes de
+                  marcarla como entregada; tu profesor lo revisará en clase.
                 </p>
-                <p className="text-xs text-muted-foreground">Por favor, confirma que:</p>
-                <ul className="space-y-1.5">
-                  {[
-                    'Has completado todo el trabajo en tu cuaderno físico',
-                    'Tu cuaderno está listo para la revisión del profesor',
-                    'Has verificado tu trabajo nuevamente',
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-xs text-muted-foreground">
-                      <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-primary" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
               </div>
             </div>
-          </div>
-
-          <p className="text-xs text-muted-foreground">
-            Una vez enviado, tu profesor será notificado para revisar tu cuaderno durante la clase.
-          </p>
+          ) : (
+            <div className="flex items-start gap-3 rounded-control border border-info/30 bg-info-soft p-4 text-info-soft-foreground">
+              <Monitor className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+              <div className="space-y-1">
+                <p className="text-body font-semibold">Entrega digital</p>
+                <p className="text-caption font-normal">Escribe tu respuesta o sube archivos a continuación.</p>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="px-6 py-4 border-t border-border bg-muted/30 rounded-b-3xl">
-          <div className="flex flex-col-reverse sm:flex-row gap-3">
-            <button
-              type="button"
-              onClick={handleCancelSubmission}
-              disabled={isSubmitting}
-              className="flex-1 flex items-center justify-center px-4 py-2.5 rounded-xl border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 disabled:opacity-30 transition-all"
-            >
-              Verificar Nuevamente
-            </button>
-            <button
-              type="button"
-              onClick={handleConfirmSubmission}
-              disabled={isSubmitting}
-              className="flex-1 btn-primary"
-            >
-              {isSubmitting ? (
-                <><div className="w-4 h-4 rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground animate-spin" />Enviando...</>
-              ) : (
-                <><CheckCircle2 className="w-4 h-4" />Sí, Enviar</>
-              )}
-            </button>
-          </div>
-        </div>
+        <TaskSubmissionView
+          assignment={assignment}
+          existingSubmission={existingSubmission || undefined}
+          onSubmit={handleSubmitAttempt}
+          onDownloadAttachment={(attachment) => {
+            if (attachment.storagePath) window.open(getCloudinaryDownloadUrl(attachment.storagePath), "_blank");
+          }}
+          isSubmitting={isSubmitting}
+          onExit={onExit}
+          headingLevel={headingLevel}
+        />
+      </div>
 
-      </DialogContent>
-    </Dialog>
-  </>
-);
-};
+      <ConfirmDialog
+        open={showConfirmModal}
+        onOpenChange={handleConfirmOpenChange}
+        title="¿Confirmas la entrega en cuaderno?"
+        description={
+          <>
+            <span className="block">Antes de continuar, confirma que:</span>
+            {NOTEBOOK_CHECKLIST.map((item) => (
+              <span key={item} className="mt-1.5 flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" aria-hidden="true" />
+                {item}
+              </span>
+            ))}
+            <span className="mt-3 block">Tu profesor recibirá un aviso para revisar tu cuaderno en clase.</span>
+          </>
+        }
+        confirmLabel="Sí, entregar"
+        cancelLabel="Revisar de nuevo"
+        onConfirm={handleConfirmSubmission}
+      />
+    </>
+  );
+}

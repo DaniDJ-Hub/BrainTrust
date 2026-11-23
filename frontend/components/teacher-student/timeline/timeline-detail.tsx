@@ -52,6 +52,7 @@ export function TimelineDetail({
             onSubmit={onSubmitTask}
             studentId={userId}
             isSubmitting={enviandoTarea}
+            headingLevel="h2"
           />
         </OverlayPanel>
       )
