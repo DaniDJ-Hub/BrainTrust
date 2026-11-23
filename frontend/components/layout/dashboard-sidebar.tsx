@@ -1,139 +1,97 @@
 "use client"
 
-import {
-  Home,
-  Calendar,
-  BookOpen,
-  X,
-  Users,
-  TrendingUp,
-  GraduationCap,
-} from "lucide-react"
+import { useEffect, useRef } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { GraduationCap, X } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from "@/app/context/AuthContext"
-import { PERMISSIONS } from "@/app/types/authentication"
+import { getHomeRoute, getRoleLabel, normalizeRole } from "@/lib/roles"
+import { getNavItems, isNavItemActive } from "./nav-config"
 
-function normalizeRole(role: string | undefined): string {
-  if (!role) return 'student'
-  const r = String(role).toLowerCase().trim()
-  if (r === 'admin' || r === 'administrator' || r === 'administrador') return 'admin'
-  if (r === 'teacher' || r === 'profesor') return 'teacher'
-  return 'student'
-}
-
-const getNavigationItems = (role: string) => {
-  const standard = [
-    { name: "Tablero",    icon: Home,     href: "/",         permission: null },
-    { name: "Calendario", icon: Calendar, href: "/calendar", permission: null },
-    { name: "Cursos",     icon: BookOpen, href: "/courses",  permission: null },
-  ]
-  const admin = [
-    { name: "Gestión de Cursos",          icon: BookOpen,    href: "/admin/courses",     permission: PERMISSIONS.COURSE_MANAGEMENT },
-    { name: "Datos Personales",           icon: Users,       href: "/admin/personal",    permission: PERMISSIONS.PERSONAL_DATA_MANAGEMENT },
-    { name: "Gestión de Usuarios",        icon: Users,       href: "/admin/users",       permission: PERMISSIONS.USER_MANAGEMENT },
-    { name: "Gráficos y Estadísticas",    icon: TrendingUp,  href: "/admin/statistics",  permission: PERMISSIONS.CATALOG_MANAGEMENT },
-  ]
-  return role === 'admin' ? admin : standard
-}
+export const MOBILE_SIDEBAR_ID = "sidebar-movil"
 
 interface DashboardSidebarProps {
   isOpen: boolean
   onClose: () => void
-  activeView: string
-  onNavigate: (view: string) => void
-  userRole?: string
 }
 
-function SidebarContent({ onClose, showClose }: { onClose: () => void; showClose: boolean }) {
-  const router = useRouter()
+interface SidebarContentProps {
+  onNavigate: () => void
+  closeButton?: React.ReactNode
+}
+
+function SidebarContent({ onNavigate, closeButton }: SidebarContentProps) {
   const pathname = usePathname()
   const { hasPermission, user } = useAuth()
 
   const role = normalizeRole(user?.role)
-  const navigation = getNavigationItems(role).filter(item =>
-    !item.permission || hasPermission(item.permission)
-  )
-
-  const isActive = (href: string) => {
-    if (href === '/' && pathname === '/') return true
-    if (href === '/') return false
-    return pathname.startsWith(href)
-  }
-
-  const handleNav = (href: string, name: string) => {
-    router.push(href)
-    onClose()
-  }
-
-  const initials = user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'U'
-  const roleLabel = role === 'admin' ? 'Administrador' : role === 'teacher' ? 'Profesor' : 'Estudiante'
+  const navigation = getNavItems(role).filter((item) => !item.permission || hasPermission(item.permission))
+  const initials = user?.name?.split(" ").map((n) => n[0]).join("").slice(0, 2) || "U"
 
   return (
     <div className="flex h-full flex-col bg-sidebar border-r border-sidebar-border">
-
-      <div className="flex items-center justify-between px-6 py-5 border-b border-sidebar-border">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-sidebar-primary flex items-center justify-center shadow-sm">
-            <GraduationCap className="h-5 w-5 text-sidebar-primary-foreground" />
-          </div>
-          <div>
-            <span className="text-base font-bold text-sidebar-foreground tracking-tight">BrainTrust</span>
-            <p className="text-[10px] text-sidebar-foreground/50 uppercase tracking-widest font-medium">LMS</p>
-          </div>
-        </div>
-        {showClose && (
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
+      <div className="flex h-16 items-center justify-between gap-2 px-4 border-b border-sidebar-border">
+        <Link
+          href={getHomeRoute(user?.role)}
+          onClick={onNavigate}
+          className="flex items-center gap-3 rounded-control px-2 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+        >
+          <span className="flex size-9 items-center justify-center rounded-control bg-sidebar-primary">
+            <GraduationCap className="size-5 text-sidebar-primary-foreground" aria-hidden="true" />
+          </span>
+          <span className="flex flex-col">
+            <span className="text-subheading text-sidebar-foreground">BrainTrust</span>
+            <span className="text-overline uppercase text-sidebar-foreground/70">LMS</span>
+          </span>
+        </Link>
+        {closeButton}
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <p className="px-3 mb-3 text-[10px] font-semibold text-sidebar-foreground/40 uppercase tracking-widest">
-          Menú
-        </p>
-        <ul className="space-y-0.5">
+      <nav aria-label="Navegación principal" className="flex-1 overflow-y-auto px-3 py-4">
+        <ul className="space-y-1">
           {navigation.map((item) => {
-            const active = isActive(item.href)
+            const active = isNavItemActive(item.href, pathname)
             return (
-              <li key={item.name}>
-                <button
-                  onClick={() => handleNav(item.href, item.name)}
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={onNavigate}
+                  aria-current={active ? "page" : undefined}
                   className={cn(
-                    "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                    "group relative flex h-10 items-center gap-3 rounded-control pl-4 pr-3 text-body transition-colors duration-150",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
                     active
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
-                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+                      ? "bg-sidebar-accent font-semibold text-sidebar-accent-foreground"
+                      : "font-medium text-sidebar-foreground/80 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
                   )}
                 >
+                  {active && (
+                    <span className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-sidebar-primary" aria-hidden="true" />
+                  )}
                   <item.icon
                     className={cn(
-                      "h-4 w-4 shrink-0 transition-colors",
-                      active ? "text-sidebar-primary-foreground" : "text-sidebar-foreground/50 group-hover:text-sidebar-foreground"
+                      "size-4 shrink-0 transition-colors",
+                      active ? "text-sidebar-primary" : "text-sidebar-foreground/70 group-hover:text-sidebar-foreground",
                     )}
+                    aria-hidden="true"
                   />
-                  {item.name}
-                </button>
+                  <span className="truncate">{item.label}</span>
+                </Link>
               </li>
             )
           })}
         </ul>
       </nav>
 
-      <div className="px-3 pb-4 border-t border-sidebar-border pt-3">
-        <div className="flex items-center gap-3 rounded-xl px-3 py-3 bg-sidebar-accent/40">
-          <div className="h-9 w-9 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground text-xs font-bold flex-shrink-0">
+      <div className="border-t border-sidebar-border p-3">
+        <div className="flex items-center gap-3 rounded-control bg-sidebar-accent/50 px-3 py-2.5">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sidebar-primary text-caption font-bold text-sidebar-primary-foreground">
             {initials}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-sidebar-foreground truncate leading-tight">
-              {user?.name || 'Usuario'}
-            </p>
-            <p className="text-xs text-sidebar-foreground/50 truncate">{roleLabel}</p>
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-body font-semibold text-sidebar-foreground">{user?.name || "Usuario"}</p>
+            <p className="truncate text-caption text-sidebar-foreground/70">{getRoleLabel(user?.role)}</p>
           </div>
         </div>
       </div>
@@ -141,28 +99,52 @@ function SidebarContent({ onClose, showClose }: { onClose: () => void; showClose
   )
 }
 
-export function DashboardSidebar({ isOpen, onClose, activeView, onNavigate, userRole }: DashboardSidebarProps) {
+export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
+  const closeRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+    closeRef.current?.focus()
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose()
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [isOpen, onClose])
+
   return (
     <>
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-          onClick={onClose}
-          aria-hidden="true"
-        />
+        <div className="fixed inset-0 z-40 bg-neutral-900/60 backdrop-blur-sm lg:hidden" onClick={onClose} aria-hidden="true" />
       )}
 
       <aside
+        id={MOBILE_SIDEBAR_ID}
+        aria-label="Menú"
+        inert={!isOpen}
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out lg:hidden",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-out lg:hidden",
+          isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <SidebarContent onClose={onClose} showClose />
+        <SidebarContent
+          onNavigate={onClose}
+          closeButton={
+            <button
+              ref={closeRef}
+              type="button"
+              onClick={onClose}
+              aria-label="Cerrar menú"
+              className="inline-flex size-10 items-center justify-center rounded-control text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+            >
+              <X className="size-4" aria-hidden="true" />
+            </button>
+          }
+        />
       </aside>
 
-      <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-64 lg:flex-col z-30">
-        <SidebarContent onClose={onClose} showClose={false} />
+      <aside aria-label="Menú" className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 lg:flex lg:w-64 lg:flex-col">
+        <SidebarContent onNavigate={() => {}} />
       </aside>
     </>
   )
