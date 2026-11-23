@@ -15,10 +15,14 @@ interface PageHeaderProps {
   breadcrumbs?: BreadcrumbEntry[]
   /** Primary action last: it renders rightmost on desktop. */
   actions?: React.ReactNode
+  /** "h2" when the view is shown inside a dialog/overlay over a page that already has its h1. */
+  as?: "h1" | "h2"
+  /** id for the heading, so a dialog can reference it with aria-labelledby. */
+  titleId?: string
   className?: string
 }
 
-export function PageHeader({ title, description, eyebrow, breadcrumbs, actions, className }: PageHeaderProps) {
+export function PageHeader({ title, description, eyebrow, breadcrumbs, actions, as: Heading = "h1", titleId, className }: PageHeaderProps) {
   return (
     <header className={cn("space-y-3", className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
@@ -51,7 +55,7 @@ export function PageHeader({ title, description, eyebrow, breadcrumbs, actions, 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0 space-y-1">
           {eyebrow && <p className="section-label">{eyebrow}</p>}
-          <h1 className="text-title text-foreground text-balance">{title}</h1>
+          <Heading id={titleId} className="text-title text-foreground text-balance">{title}</Heading>
           {description && <p className="text-body text-muted-foreground max-w-prose">{description}</p>}
         </div>
         {actions && <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">{actions}</div>}
