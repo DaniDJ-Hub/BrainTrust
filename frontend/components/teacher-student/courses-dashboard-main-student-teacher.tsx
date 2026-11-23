@@ -44,7 +44,6 @@ export function CourseDashboard() {
   } = esEstudiante ? useStudentCourses(usuarioId!) : useCoursesByTeacher(usuarioId!);
 
 
-  console.log("CURSOS ", cursos)
   const { createCourse: crearCurso, updateCourse: actualizarCurso, deleteCourse: eliminarCurso } = useCourseMutations();
 
   const [idConfirmacionEliminar, setIdConfirmacionEliminar] = React.useState<CourseId | null>(
@@ -84,8 +83,6 @@ export function CourseDashboard() {
 
     try {
       if (cursoId) {
-        console.log("Actualizando curso con ID:", cursoId);
-        console.log("Tiene nuevo archivo de imagen:", !!archivoImagen);
 
         const cursoActual = cursos.find((c) => c.id === cursoId);
         const urlImagenAnterior = cursoActual?.urlImage;
@@ -104,8 +101,6 @@ export function CourseDashboard() {
           }
         );
       } else {
-        console.log("Creando nuevo curso");
-        console.log("Tiene archivo de imagen:", !!archivoImagen);
 
         const cursoConProfesor = {
           ...datosFormulario,

@@ -75,7 +75,6 @@ export function StudentCourseTaskOverview({ courseId }: StudentCourseTaskOvervie
     }
 
 
-    console.log("assignments", assignments)
     if (selectedTask) {
         const assignment = assignments.find(a => a.id === selectedTask)
         return assignment ? (
@@ -96,7 +95,6 @@ export function StudentCourseTaskOverview({ courseId }: StudentCourseTaskOvervie
         ) : null
     }
 
-    console.log("submissions", assignments)
     if (!selectedUnitId) {
        return (
   <div className="page-container">
@@ -373,8 +371,9 @@ export function StudentCourseTaskOverview({ courseId }: StudentCourseTaskOvervie
                         <div className="flex justify-center">
                           <button
                             onClick={() => handleViewTask(assignment.id)}
-                            className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100 transition-all"
+                            className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all"
                             title={assignment.submission ? "Ver Entrega" : "Comenzar Tarea"}
+                            aria-label={`${assignment.submission ? "Ver entrega" : "Comenzar tarea"}: ${assignment.name}`}
                           >
                             <Eye className="w-4 h-4" />
                           </button>
@@ -495,8 +494,9 @@ export function StudentCourseTaskOverview({ courseId }: StudentCourseTaskOvervie
                         <div className="flex justify-center">
                           <button
                             onClick={() => handleViewQuiz(quiz.id)}
-                            className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100 transition-all"
+                            className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all"
                             title={quiz.submission ? "Ver Resultados" : "Realizar Cuestionario"}
+                            aria-label={`${quiz.submission ? "Ver resultados" : "Realizar cuestionario"}: ${quiz.title}`}
                           >
                             <Eye className="w-4 h-4" />
                           </button>

@@ -65,7 +65,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
   onExit,
 }) => {
 
-  console.log("DATOS DEL CUESTIONARIO", quiz)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [timeRemaining, setTimeRemaining] = useState<number>(() => {

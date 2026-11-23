@@ -22,6 +22,7 @@ import {
   Quiz,
 } from "@/app/domain/entities/CourseEntities";
 import { useAuth } from "@/app/context/AuthContext";
+import { OverlayPanel } from "@/components/common";
 import { VistaTareaEstudiante } from "../student/tasks-transactional-view-student";
 import { VistaQuizEstudiante } from "../student/quiz-transactional-view-student";
 import { VistaQuiz as VistaQuizProfesor } from "../teacher/quiz-view-information-teacher";
@@ -71,6 +72,15 @@ const obtenerTextoPlazoRecurso = (recurso: DatosRecursoLineaTiempo): string => {
   return "Próximamente";
 };
 
+/** Student already submitted this assignment (backend sends studentSubmissionStatus → submissions[0]). */
+const estaEntregadaPorAlumno = (
+  recurso: DatosRecursoLineaTiempo,
+  tipoUsuario: "teacher" | "student"
+): boolean =>
+  tipoUsuario === "student" &&
+  obtenerTipoRecurso(recurso) === "ASSIGNMENT" &&
+  ((recurso as Assignment).submissions?.length ?? 0) > 0;
+
 const obtenerEstadoRecurso = (
   recurso: DatosRecursoLineaTiempo,
   tipoUsuario: "teacher" | "student",
@@ -78,6 +88,11 @@ const obtenerEstadoRecurso = (
 ): string => {
   const tipo = obtenerTipoRecurso(recurso);
   const fechaEntrega = "dueDate" in recurso ? recurso.dueDate : null;
+
+  if (estaEntregadaPorAlumno(recurso, tipoUsuario)) {
+    const modoEntrega = (recurso as Assignment).deliveryMode === "TEAM" ? "Grupal" : "Individual";
+    return `Entregado (${modoEntrega})`;
+  }
 
   if (fechaEntrega && new Date(fechaEntrega) < new Date()) {
     return "VENCIDO - Necesita atención";
@@ -285,36 +300,48 @@ export function TimelineSection({ userId, userType }: PropsSeccionLineaTiempo) {
     if (userType === "student") {
       if (tipoRecurso === "ASSIGNMENT") {
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="w-full max-w-6xl max-h-[95vh] overflow-y-auto">
-              <VistaTareaEstudiante
-                onExit={handleCerrarModal}
-                assignment={recursoActivo as Assignment}
-                onSubmit={handleEnvioTarea}
-                studentId={userId}
-                isSubmitting={enviandoTarea}
-              />
-            </div>
-          </div>
+          <OverlayPanel
+            label={`Tarea: ${recursoActivo.title}`}
+            onEscape="trigger-close"
+            overlayClassName="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+            panelClassName="w-full max-w-6xl max-h-[95vh] overflow-y-auto"
+          >
+            <VistaTareaEstudiante
+              onExit={handleCerrarModal}
+              assignment={recursoActivo as Assignment}
+              onSubmit={handleEnvioTarea}
+              studentId={userId}
+              isSubmitting={enviandoTarea}
+            />
+          </OverlayPanel>
         );
       } else if (tipoRecurso === "QUIZ" && detalleQuiz) {
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="w-full max-w-6xl max-h-[95vh] overflow-y-auto">
-              <VistaQuizEstudiante
-                quizData={detalleQuiz}
-                onSubmit={handleEnvioQuiz}
-                onExit={handleCerrarModal}
-                studentId={userId}
-                isSubmitting={enviandoQuiz}
-              />
-            </div>
-          </div>
+          // The quiz runs a timer and has its own exit confirmation: Escape must not close it.
+          <OverlayPanel
+            label={`Quiz: ${recursoActivo.title}`}
+            onEscape="none"
+            overlayClassName="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+            panelClassName="w-full max-w-6xl max-h-[95vh] overflow-y-auto"
+          >
+            <VistaQuizEstudiante
+              quizData={detalleQuiz}
+              onSubmit={handleEnvioQuiz}
+              onExit={handleCerrarModal}
+              studentId={userId}
+              isSubmitting={enviandoQuiz}
+            />
+          </OverlayPanel>
         );
       }
     } else {
       return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <OverlayPanel
+          label={`Detalle: ${recursoActivo.title}`}
+          onEscape={handleCerrarModal}
+          overlayClassName="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          panelClassName="w-full max-w-4xl"
+        >
           <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl bg-card">
             <div className="min-h-full bg-background p-4 md:p-6">
               <div className="max-w-4xl mx-auto">
@@ -333,7 +360,7 @@ export function TimelineSection({ userId, userType }: PropsSeccionLineaTiempo) {
               </div>
             </div>
           </Card>
-        </div>
+        </OverlayPanel>
       );
     }
 
@@ -429,10 +456,11 @@ export function TimelineSection({ userId, userType }: PropsSeccionLineaTiempo) {
           <div className="space-y-4">
             {recursosMostrados.map((item) => {
               const estadoItem = obtenerEstadoRecurso(item, userType, userId);
-              const textoPlazo = obtenerTextoPlazoRecurso(item);
-              const urgenciaItem = obtenerUrgenciaLineaTiempo(
-                "dueDate" in item ? item.dueDate : null
-              );
+              const entregada = estaEntregadaPorAlumno(item, userType);
+              const textoPlazo = entregada ? "Entregado" : obtenerTextoPlazoRecurso(item);
+              const urgenciaItem = entregada
+                ? "normal"
+                : obtenerUrgenciaLineaTiempo("dueDate" in item ? item.dueDate : null);
               const IconoItem = obtenerIconoRecurso(item);
               const esTareaGrupal =
                 obtenerTipoRecurso(item) === "ASSIGNMENT" &&
@@ -441,8 +469,16 @@ export function TimelineSection({ userId, userType }: PropsSeccionLineaTiempo) {
               return (
                 <div
                   key={item.id}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleVerDetalles(item);
+                    }
+                  }}
                   className={cn(
-                    "group relative p-4 rounded-lg border transition-all hover:shadow-md cursor-pointer",
+                    "group relative p-4 rounded-lg border transition-all hover:shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     urgenciaItem === "urgent"
                       ? "border-destructive/30 bg-destructive/5 hover:border-destructive/50"
                       : urgenciaItem === "warning"
