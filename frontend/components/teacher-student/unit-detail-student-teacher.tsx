@@ -39,6 +39,7 @@ import { VistaTareaEstudiante } from "../student/tasks-transactional-view-studen
 import { VistaQuizEstudiante } from "../student/quiz-transactional-view-student";
 
 import { useAuth } from "@/app/context/AuthContext";
+import { useCourseAllUnits } from "@/components/teacher/hooks/courses-hooks";
 import {
   useAssignmentMutations,
   useAssignmentsByUnit,
@@ -85,6 +86,10 @@ export function UnitDetail({
   } = usePagesByUnit(idCourse, idUnit);
 
   const { data: equipoUsuario } = useUserTeam(user?.id || "");
+
+  // courses/[id] never passes unitData; resolve the unit from the course units query (already cached by the overview).
+  const { units: unidadesCurso } = useCourseAllUnits(idCourse);
+  const unidad = unitData ?? unidadesCurso?.find((u) => u.id === idUnit);
 
   const mutacionesTarea = useAssignmentMutations();
   const mutacionesQuiz = useQuizMutations();
@@ -552,8 +557,8 @@ return (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
-              {unitData
-                ? `Unidad ${unitData.numUnity}: ${unitData.name}`
+              {unidad
+                ? `Unidad ${unidad.numUnity}: ${unidad.name}`
                 : `Recursos de la Unidad`}
             </h1>
             <p className="text-muted-foreground text-sm">
@@ -621,6 +626,8 @@ return (
 
               <div className="flex items-center justify-center gap-8">
                 <button
+                  type="button"
+                  aria-label="Recurso anterior"
                   onClick={handleAnterior}
                   disabled={indiceRecursoActual === 0}
                   className={`h-16 w-16 rounded-full border-4 border-primary flex items-center justify-center transition-all text-foreground ${
@@ -643,6 +650,8 @@ return (
                 </div>
 
                 <button
+                  type="button"
+                  aria-label="Recurso siguiente"
                   onClick={handleSiguiente}
                   disabled={indiceRecursoActual === recursos.length - 1}
                   className={`h-16 w-16 rounded-full border-4 border-primary flex items-center justify-center transition-all text-foreground ${
@@ -788,9 +797,12 @@ return (
               </div>
 
               <div className="flex justify-center gap-2 pt-4 pb-8">
-                {recursos.map((_, indice) => (
+                {recursos.map((recurso, indice) => (
                   <button
                     key={indice}
+                    type="button"
+                    aria-label={`Ir al recurso ${indice + 1}: ${recurso.title}`}
+                    aria-current={indice === indiceRecursoActual ? "true" : undefined}
                     onClick={() => setIndiceRecursoActual(indice)}
                     className={`h-3 rounded-full transition-all ${
                       indice === indiceRecursoActual

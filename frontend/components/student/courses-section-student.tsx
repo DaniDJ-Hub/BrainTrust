@@ -88,7 +88,8 @@ export function CoursesSectionStudent({ studentId }: StudentCoursesSectionProps)
   }
 
   const carouselHeight = showAllCourses ? 'auto' : 'h-[20rem]';
-  const transformStyle = showAllCourses ? 'none' : `translateY(-${currentIndex * (200 + 16)}px)`;
+  // visibleCourses is already sliced from currentIndex; translating as well shifted the cards out of view.
+  const transformStyle = 'none';
   const activeCourses  = courses.filter(course => course.active).length;
 
   return (
