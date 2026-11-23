@@ -10,6 +10,9 @@ import { FoundationTokens } from "./foundation-tokens"
 import { GalleryActions } from "./gallery-actions"
 import { GalleryForms } from "./gallery-forms"
 import { GalleryData } from "./gallery-data"
+import { GalleryCommonDisplay } from "./gallery-common-display"
+import { GalleryCommonInteractive } from "./gallery-common-interactive"
+import { ConfirmProvider } from "@/components/common"
 
 const SECTIONS = [
   { id: "color", label: "Color" },
@@ -18,6 +21,8 @@ const SECTIONS = [
   { id: "acciones", label: "Botones y badges" },
   { id: "formularios", label: "Formularios" },
   { id: "datos", label: "Cards y tablas" },
+  { id: "common-display", label: "Base · presentación" },
+  { id: "common-interactive", label: "Base · datos y diálogos" },
 ]
 
 export function DesignShowcase() {
@@ -39,7 +44,7 @@ export function DesignShowcase() {
           </Button>
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-lg font-semibold text-foreground tracking-tight">Design system</h1>
-            <p className="text-xs text-muted-foreground">BrainTrust · Navy &amp; Gold · Fase 1 (tokens)</p>
+            <p className="text-xs text-muted-foreground">BrainTrust · Navy &amp; Gold · Fase 2 (componentes base)</p>
           </div>
           <Button
             variant="outline"
@@ -72,6 +77,10 @@ export function DesignShowcase() {
         <GalleryActions />
         <GalleryForms />
         <GalleryData />
+        <ConfirmProvider>
+          <GalleryCommonDisplay />
+          <GalleryCommonInteractive />
+        </ConfirmProvider>
       </main>
     </div>
   )

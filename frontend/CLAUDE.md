@@ -86,6 +86,15 @@ All design tokens live in `app/globals.css`. **Navy & Gold**. Live catalogue at 
 .page-container   .page-title        .page-subtitle     .icon-badge      .stat-card      .mobile-card
 ```
 
+### Base components (`components/common/`, import from `@/components/common`)
+- `PageHeader` — one per view: title (h1), description, breadcrumbs, actions (primary last)
+- `StatusBadge kind="submission|course|user|enrollment|analysis"` — the ONLY way to render LMS states. Labels/tones live in `status-map.ts`; never hand-color a status
+- `DataTable` — table on desktop + cards on mobile, with loading and empty states. Needs `caption`; mark one column `primary`, row actions `actions`
+- `FormField` — label/hint/error/required wiring via render prop: `{(field) => <Input {...field} {...register("x")} />}`
+- `StatCard` — KPIs; `tone="highlight"` at most once per view
+- `EmptyState` — empty lists and failed loads (`tone="error"` + retry action)
+- `ConfirmDialog` / `useConfirm()` — replace `window.confirm`. Use toasts (`sonner`) or `FormField` errors instead of `alert()`. `useConfirm` needs `<ConfirmProvider>`
+
 ## Code Conventions
 
 ### TypeScript
