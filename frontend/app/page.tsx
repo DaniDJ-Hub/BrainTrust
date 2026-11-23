@@ -1,19 +1,13 @@
-﻿ 
- 
- 
-"use client";
+﻿"use client";
 
-import { DashboardHeader } from "@/components/layout/dashboard-header"
-import { DashboardSidebar } from "@/components/layout/dashboard-sidebar"
+import { useEffect } from "react"
+import { AppShell } from "@/components/layout/app-shell"
 import { TimelineSection } from "@/components/teacher-student/timeline-section-student-teacher"
 import { CoursesSectionTeacher } from "@/components/teacher/courses-section-teacher"
-import { useState, useEffect } from "react"
-import { useAuth } from "./context/AuthContext";
-import { CoursesSectionStudent } from "@/components/student/courses-section-student";
+import { CoursesSectionStudent } from "@/components/student/courses-section-student"
+import { useAuth } from "./context/AuthContext"
 
 export default function DashboardPage() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [activeView, setActiveView] = useState("Dashboard")
   const { user, isAuthenticated, isLoading } = useAuth()
 
   useEffect(() => {
@@ -34,41 +28,29 @@ export default function DashboardPage() {
     return null
   }
 
+  const isTeacher = user?.role === 'teacher'
+  const firstName = user?.name?.split(' ')[0] || 'Usuario'
+
   return (
-    <div className="flex min-h-screen bg-background">
-      <DashboardSidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        activeView={activeView}
-        onNavigate={setActiveView}
-        userRole={user?.role}
-      />
-
-      <div className="flex-1 flex flex-col lg:ml-64">
-        <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
-
-        <main className="flex-1 p-4 md:p-6 lg:p-8 lg:pt-20 space-y-6">
-          {activeView === "Dashboard" && (
-            <>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <TimelineSection
-                    userId={user?.id || "user-001"}
-                    userType={user?.role === 'teacher' ? 'teacher' : 'student'}
-                  />
-                </div>
-                <div className="lg:col-span-1">
-                  {user?.role === 'teacher' ? (
-                    <CoursesSectionTeacher teacherId={user.id} key={user.id} />
-                  ) : (
-                    <CoursesSectionStudent studentId={user?.id || "user-001"} />
-                  )}
-                </div>
-              </div>
-            </>
+    <AppShell
+      title="Tablero"
+      description={`Hola, ${firstName}. ${isTeacher ? "Gestiona tus cursos y estudiantes." : "Este es tu progreso de aprendizaje."}`}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <TimelineSection
+            userId={user?.id || "user-001"}
+            userType={isTeacher ? 'teacher' : 'student'}
+          />
+        </div>
+        <div className="lg:col-span-1">
+          {isTeacher ? (
+            <CoursesSectionTeacher teacherId={user.id} key={user.id} />
+          ) : (
+            <CoursesSectionStudent studentId={user?.id || "user-001"} />
           )}
-        </main>
+        </div>
       </div>
-    </div>
+    </AppShell>
   )
 }

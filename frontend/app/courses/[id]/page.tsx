@@ -1,14 +1,12 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { DashboardHeader } from "@/components/layout/dashboard-header";
-import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
+import { AppShell } from "@/components/layout/app-shell";
 import { CourseOverview } from "@/components/teacher-student/course-overview-units-teacher-student";
 import { UnitDetail } from "@/components/teacher-student/unit-detail-student-teacher";
 import { CourseStudents } from "@/components/teacher-student/course-section-enrollment-teacher-student";
 import { CourseGroups } from "@/components/teacher-student/course-section-groups-student-teacher";
 import { useParams, useRouter } from "next/navigation";
-import { useAuth } from "@/app/context/AuthContext";
 import { CourseTaskOverview } from "@/components/teacher-student/course-submission-student-teacher";
 import { useGradebook } from "@/components/teacher-student/hooks/gradebooks-hooks";
 import { GradebookUnitDetail } from "@/components/teacher-student/gradebook-unit-detail";
@@ -20,9 +18,7 @@ type GradebookView = "units" | "course";
 
 export default function CoursePage() {
   const router = useRouter();
-  const { user } = useAuth();
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<CourseView>("overview");
   const [selectedSubmission, setSelectedSubmission] = useState<number | null>(null);
@@ -169,18 +165,7 @@ const {
   };
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <DashboardSidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        activeView={currentView}
-        onNavigate={(view) => handleViewChange(view as CourseView)}
-        userRole={user?.role}
-      />
-
-      <div className="flex-1 flex flex-col lg:ml-64">
-        <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1">
+    <AppShell padding="none">
           <div className="bg-card border-b border-border sticky top-16 z-10">
             <div className="flex overflow-x-auto scrollbar-hide">
               <button
@@ -273,8 +258,6 @@ const {
               <CourseGroups courseId={courseId} />
             ) : null}
           </div>
-        </main>
-      </div>
-    </div>
+    </AppShell>
   );
 }

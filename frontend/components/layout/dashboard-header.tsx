@@ -1,6 +1,10 @@
 "use client"
 
-import { Menu, LogOut, User, Settings, Sun, Moon, ChevronDown } from "lucide-react"
+import { useState } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { ChevronDown, ChevronRight, LogOut, Menu, Moon, Sun, User } from "lucide-react"
+import { useTheme } from "next-themes"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -10,130 +14,134 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { useTheme } from "next-themes"
+import { cn } from "@/lib/utils"
 import { useAuth } from "@/app/context/AuthContext"
+import { getRoleLabel, normalizeRole } from "@/lib/roles"
 import { ProfileModal } from "../auth/profile-modal"
+import { getBreadcrumbs } from "./nav-config"
+import { MOBILE_SIDEBAR_ID } from "./dashboard-sidebar"
 
 interface DashboardHeaderProps {
   onMenuClick: () => void
+  menuOpen: boolean
 }
 
-export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
+const FOCUS_RING = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+
+export function DashboardHeader({ onMenuClick, menuOpen }: DashboardHeaderProps) {
   const { user, logout } = useAuth()
-  const router = useRouter()
+  const pathname = usePathname()
+  const { resolvedTheme, setTheme } = useTheme()
   const [showProfileModal, setShowProfileModal] = useState(false)
-  const { theme, setTheme } = useTheme()
+
+  const crumbs = getBreadcrumbs(pathname, normalizeRole(user?.role))
+  const firstName = user?.name?.split(" ")[0] || "Usuario"
+  const initials = user?.name?.split(" ").map((n) => n[0]).join("").slice(0, 2) || "U"
+  const isDark = resolvedTheme === "dark"
 
   const handleLogout = async () => {
     try {
       await logout()
-      await new Promise(resolve => setTimeout(resolve, 100))
-      window.location.href = '/auth/login'
+      await new Promise((resolve) => setTimeout(resolve, 100))
     } catch {
-      window.location.href = '/auth/login'
+      // A failed logout call must not keep the user inside the app.
     }
+    window.location.href = "/auth/login"
   }
-
-  const initials = user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'U'
-  const roleLabel = user?.role === 'teacher' ? 'Profesor' : user?.role === 'admin' ? 'Administrador' : 'Estudiante'
 
   return (
     <>
-      <header className="sticky top-0 z-40 h-16 flex items-center gap-4 px-4 sm:px-6 lg:px-8 bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
-
+      <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-border bg-card/95 px-4 backdrop-blur-md sm:px-6 lg:px-8">
         <button
+          type="button"
           onClick={onMenuClick}
           className="icon-btn lg:hidden"
           aria-label="Abrir menú"
+          aria-expanded={menuOpen}
+          aria-controls={MOBILE_SIDEBAR_ID}
         >
-          <Menu className="h-5 w-5" />
+          <Menu className="size-5" aria-hidden="true" />
         </button>
 
-        <div className="flex-1 min-w-0">
-          <h1 className="text-base sm:text-lg font-semibold text-foreground truncate">
-            Bienvenido,{" "}
-            <span className="text-primary font-bold">{user?.name?.split(' ')[0] || 'Usuario'}</span>
-          </h1>
-          <p className="text-xs text-muted-foreground hidden sm:block leading-tight mt-0.5">
-            {user?.role === 'teacher'
-              ? "Gestiona tus cursos y estudiantes"
-              : user?.role === 'admin'
-              ? "Panel de administración"
-              : "Tu progreso de aprendizaje"}
-          </p>
-        </div>
+        <nav aria-label="Ruta de navegación" className="min-w-0 flex-1">
+          <ol className="flex min-w-0 items-center gap-1 text-body">
+            {crumbs.map((crumb, index) => {
+              const isLast = index === crumbs.length - 1
+              return (
+                <li key={`${crumb.label}-${index}`} className={cn("flex min-w-0 items-center gap-1", !isLast && "hidden sm:flex")}>
+                  {crumb.href && !isLast ? (
+                    <Link href={crumb.href} className={cn("truncate rounded-tag text-muted-foreground hover:text-foreground", FOCUS_RING)}>
+                      {crumb.label}
+                    </Link>
+                  ) : (
+                    <span aria-current={isLast ? "page" : undefined} className="truncate font-semibold text-foreground">
+                      {crumb.label}
+                    </span>
+                  )}
+                  {!isLast && <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />}
+                </li>
+              )
+            })}
+          </ol>
+        </nav>
 
         <div className="flex items-center gap-1 sm:gap-2">
-
           <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            type="button"
+            onClick={() => setTheme(isDark ? "light" : "dark")}
             className="icon-btn relative"
-            aria-label="Cambiar tema"
+            aria-label={isDark ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
             title="Cambiar tema"
           >
-            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" aria-hidden="true" />
+            <Moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" aria-hidden="true" />
           </button>
 
-          <div className="w-px h-6 bg-border mx-1 hidden sm:block" />
+          <div className="mx-1 hidden h-6 w-px bg-border sm:block" aria-hidden="true" />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl hover:bg-muted/50 transition-all duration-150 focus:outline-none">
-                <Avatar className="h-8 w-8 border-2 border-primary/20">
-                  <AvatarImage src={user?.avatar} alt={user?.name} />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-xs font-bold">
-                    {initials}
-                  </AvatarFallback>
+              <button
+                type="button"
+                aria-label={`Menú de cuenta de ${user?.name || "Usuario"}`}
+                className={cn("flex items-center gap-2 rounded-control py-1 pl-1 pr-2 transition-colors hover:bg-accent", FOCUS_RING)}
+              >
+                <Avatar className="size-8 border-2 border-border">
+                  <AvatarImage src={user?.avatar} alt="" />
+                  <AvatarFallback className="bg-primary text-caption font-bold text-primary-foreground">{initials}</AvatarFallback>
                 </Avatar>
-                <div className="hidden sm:flex flex-col items-start leading-tight">
-                  <span className="text-xs font-semibold text-foreground max-w-[100px] truncate">
-                    {user?.name?.split(' ')[0] || 'Usuario'}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground">{roleLabel}</span>
-                </div>
-                <ChevronDown className="h-3 w-3 text-muted-foreground hidden sm:block" />
+                <span className="hidden flex-col items-start sm:flex">
+                  <span className="max-w-[120px] truncate text-caption font-semibold text-foreground">{firstName}</span>
+                  <span className="text-caption font-normal text-muted-foreground">{getRoleLabel(user?.role)}</span>
+                </span>
+                <ChevronDown className="hidden size-3.5 text-muted-foreground sm:block" aria-hidden="true" />
               </button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent className="w-56 rounded-2xl border-border shadow-lg" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal px-4 py-3">
+            <DropdownMenuContent className="w-60 rounded-surface border-border shadow-md" align="end">
+              <DropdownMenuLabel className="px-3 py-2.5 font-normal">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-9 w-9 border border-border">
-                    <AvatarImage src={user?.avatar} alt={user?.name} />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
-                      {initials}
-                    </AvatarFallback>
+                  <Avatar className="size-9 border border-border">
+                    <AvatarImage src={user?.avatar} alt="" />
+                    <AvatarFallback className="bg-primary text-caption font-bold text-primary-foreground">{initials}</AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground truncate">{user?.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-body font-semibold text-foreground">{user?.name}</p>
+                    <p className="truncate text-caption font-normal text-muted-foreground">{user?.email}</p>
                   </div>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setShowProfileModal(true)}
-                className="gap-2 rounded-xl mx-1 cursor-pointer"
-              >
-                <User className="h-4 w-4" />
+              <DropdownMenuItem onSelect={() => setShowProfileModal(true)} className="mx-1 cursor-pointer gap-2 rounded-control">
+                <User className="size-4" aria-hidden="true" />
                 Perfil y configuración
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setShowProfileModal(true)}
-                className="gap-2 rounded-xl mx-1 cursor-pointer"
-              >
-                <Settings className="h-4 w-4" />
-                Ajustes de cuenta
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={handleLogout}
-                className="gap-2 rounded-xl mx-1 mb-1 text-destructive focus:text-destructive focus:bg-destructive/10 cursor-pointer"
+                onSelect={handleLogout}
+                className="mx-1 mb-1 cursor-pointer gap-2 rounded-control text-destructive focus:bg-destructive-soft focus:text-destructive-soft-foreground"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="size-4" aria-hidden="true" />
                 Cerrar sesión
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -141,12 +149,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
         </div>
       </header>
 
-      {showProfileModal && (
-        <ProfileModal
-          isOpen={showProfileModal}
-          onClose={() => setShowProfileModal(false)}
-        />
-      )}
+      {showProfileModal && <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />}
     </>
   )
 }

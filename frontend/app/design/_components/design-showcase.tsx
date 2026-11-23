@@ -5,6 +5,8 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { ArrowLeft, Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/app/context/AuthContext"
+import { getHomeRoute } from "@/lib/roles"
 import { ColorTokens } from "./color-tokens"
 import { FoundationTokens } from "./foundation-tokens"
 import { GalleryActions } from "./gallery-actions"
@@ -27,6 +29,7 @@ const SECTIONS = [
 
 export function DesignShowcase() {
   const { resolvedTheme, setTheme } = useTheme()
+  const { user } = useAuth()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => setMounted(true), [])
@@ -37,14 +40,14 @@ export function DesignShowcase() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
-          <Button asChild variant="ghost" size="icon" aria-label="Volver al tablero">
-            <Link href="/">
+          <Button asChild variant="ghost" size="icon" aria-label="Volver al inicio">
+            <Link href={getHomeRoute(user?.role)}>
               <ArrowLeft />
             </Link>
           </Button>
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-lg font-semibold text-foreground tracking-tight">Design system</h1>
-            <p className="text-xs text-muted-foreground">BrainTrust · Navy &amp; Gold · Fase 2 (componentes base)</p>
+            <p className="text-xs text-muted-foreground">BrainTrust · Navy &amp; Gold · Fase 3 (shell)</p>
           </div>
           <Button
             variant="outline"

@@ -95,6 +95,13 @@ All design tokens live in `app/globals.css`. **Navy & Gold**. Live catalogue at 
 - `EmptyState` — empty lists and failed loads (`tone="error"` + retry action)
 - `ConfirmDialog` / `useConfirm()` — replace `window.confirm`. Use toasts (`sonner`) or `FormField` errors instead of `alert()`. `useConfirm` needs `<ConfirmProvider>`
 
+### App shell & roles
+- Every authenticated route renders inside `AppShell` (`components/layout/app-shell.tsx`): sidebar + top bar + `<main id="contenido">`. Never mount `DashboardSidebar`/`DashboardHeader` directly
+- `AppShell title="…"` renders the view's `PageHeader` (the only h1). Omit `title` when the view still renders its own h1
+- `padding="none"` only for views that bring their own padding or full-bleed content (e.g. sticky tabs in `courses/[id]`)
+- Menu items and top-bar breadcrumbs come from `components/layout/nav-config.ts`
+- Roles: use `normalizeRole`, `getHomeRoute`, `getRoleLabel` from `lib/roles.ts` (admin home is `/admin/users`; admin cannot access `/`)
+
 ## Code Conventions
 
 ### TypeScript

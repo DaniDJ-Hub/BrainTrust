@@ -85,7 +85,12 @@ export function proxy(request: NextRequest) {
 
   
   console.log(`User role: ${userRole}, User ID: ${userId}`);
-  
+
+  // "/" is the student/teacher dashboard; send admins to their own home instead of the login page.
+  if (pathname === '/' && userRole === 'admin') {
+    return NextResponse.redirect(new URL('/admin/users', request.url));
+  }
+
   // Check if route requires specific role
   const checkRouteAccess = () => {
     // Check if it's a shared route (EXACT MATCH)
