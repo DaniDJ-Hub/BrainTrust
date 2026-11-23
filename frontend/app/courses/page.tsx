@@ -5,7 +5,7 @@ import { CourseDashboard } from "@/components/teacher-student/courses-dashboard-
 
 export default function CoursesPage() {
   return (
-    <AppShell padding="none">
+    <AppShell>
       <CourseDashboard />
     </AppShell>
   );

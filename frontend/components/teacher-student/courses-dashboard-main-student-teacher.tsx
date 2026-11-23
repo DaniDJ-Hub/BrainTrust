@@ -1,32 +1,18 @@
 ﻿"use client";
 
 import * as React from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  Loader2,
-  Plus,
-  Edit,
-  Trash2,
-  Check,
-  X,
-  Zap,
-  ChevronRight,
-  GraduationCap,
-  BookOpen,
-  Eye,
-} from "lucide-react";
 import { useRouter } from "next/navigation";
+import { AlertTriangle, BookOpen, Plus, RefreshCw } from "lucide-react";
+import { toast } from "sonner";
 import { Course } from "@/app/domain/entities/CourseEntities";
 import { CourseId } from "@/app/domain/valueObjects";
 import { CourseFormModal } from "../teacher/course-form-creator-teacher";
-import {
-  useCourseMutations,
-  useCoursesByTeacher,
-} from "@/components/teacher/hooks/courses-hooks";
+import { useCourseMutations, useCoursesByTeacher } from "@/components/teacher/hooks/courses-hooks";
 import { useAuth } from "@/app/context/AuthContext";
 import { useStudentCourses } from "@/app/presentation/hooks/course/student/student-hooks";
+import { ConfirmDialog, EmptyState, PageHeader } from "@/components/common";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CourseCard } from "./courses/course-card";
 
 export function CourseDashboard() {
   const router = useRouter();
@@ -43,17 +29,11 @@ export function CourseDashboard() {
     refetch,
   } = esEstudiante ? useStudentCourses(usuarioId!) : useCoursesByTeacher(usuarioId!);
 
-
-  console.log("CURSOS ", cursos)
   const { createCourse: crearCurso, updateCourse: actualizarCurso, deleteCourse: eliminarCurso } = useCourseMutations();
 
-  const [idConfirmacionEliminar, setIdConfirmacionEliminar] = React.useState<CourseId | null>(
-    null
-  );
+  const [cursoAEliminar, setCursoAEliminar] = React.useState<Course | null>(null);
   const [modalFormularioAbierto, setModalFormularioAbierto] = React.useState(false);
-  const [cursoAEditar, setCursoAEditar] = React.useState<Course | undefined>(
-    undefined
-  );
+  const [cursoAEditar, setCursoAEditar] = React.useState<Course | undefined>(undefined);
 
   const handleCrearCurso = () => {
     if (esEstudiante) return;
@@ -84,44 +64,21 @@ export function CourseDashboard() {
 
     try {
       if (cursoId) {
-        console.log("Actualizando curso con ID:", cursoId);
-        console.log("Tiene nuevo archivo de imagen:", !!archivoImagen);
-
         const cursoActual = cursos.find((c) => c.id === cursoId);
-        const urlImagenAnterior = cursoActual?.urlImage;
-
         await actualizarCurso.mutateAsync(
           {
             courseId: cursoId,
             courseData: datosFormulario,
             imageFile: archivoImagen || undefined,
-            oldImageUrl: urlImagenAnterior || undefined, // Pasar la URL de imagen anterior
+            oldImageUrl: cursoActual?.urlImage || undefined,
           },
-          {
-            onSuccess: () => {
-              handleCerrarModalFormulario();
-            },
-          }
+          { onSuccess: handleCerrarModalFormulario }
         );
       } else {
-        console.log("Creando nuevo curso");
-        console.log("Tiene archivo de imagen:", !!archivoImagen);
-
-        const cursoConProfesor = {
-          ...datosFormulario,
-          teacherId: usuarioId || "current-teacher-id",
-        } as Course;
-
+        const cursoConProfesor = { ...datosFormulario, teacherId: usuarioId || "current-teacher-id" } as Course;
         await crearCurso.mutateAsync(
-          {
-            courseData: cursoConProfesor,
-            imageFile: archivoImagen || undefined,
-          },
-          {
-            onSuccess: () => {
-              handleCerrarModalFormulario();
-            },
-          }
+          { courseData: cursoConProfesor, imageFile: archivoImagen || undefined },
+          { onSuccess: handleCerrarModalFormulario }
         );
       }
     } catch (error) {
@@ -133,209 +90,122 @@ export function CourseDashboard() {
     router.push(`/courses/${cursoId}`);
   };
 
-  const handleEliminacionConfirmada = (cursoId: CourseId) => {
-    if (esEstudiante) return;
-    eliminarCurso.mutate(cursoId, {
-      onSuccess: () => {
-        setIdConfirmacionEliminar(null);
-      },
-    });
+  const handleEliminacionConfirmada = async () => {
+    if (esEstudiante || !cursoAEliminar) return;
+    try {
+      await eliminarCurso.mutateAsync(cursoAEliminar.id);
+      toast.success("Curso eliminado");
+    } catch (error) {
+      toast.error("No se pudo eliminar el curso. Inténtalo de nuevo.");
+      throw error;
+    }
   };
 
-  const TarjetaCurso: React.FC<{ course: Course }> = ({ course }) => {
-    const colorMostrar = "bg-primary";
-    const eliminacionPendiente = idConfirmacionEliminar === course.id;
-return (
-      <Card
-        className={`flex flex-col border-l-4 border-l-primary bg-card shadow-xl transition-transform duration-300 hover:scale-[1.02] overflow-hidden`}
-      >
-        <div
-          className="relative h-32 w-full bg-cover bg-center overflow-hidden"
-          style={{
-            backgroundImage: course.urlImage
-              ? `url(${course.urlImage})`
-              : "none",
-          }}
-        >
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-4">
-            <p className="text-white text-center italic text-sm font-semibold opacity-80 backdrop-blur-[1px]">
-              {course.description.substring(0, 75)}...
-            </p>
-          </div>
-          <div className="absolute top-2 right-2 flex gap-2">
-            <span className="text-xs font-bold px-2 py-1 rounded-full bg-highlight text-highlight-foreground shadow-lg uppercase flex items-center gap-1">
-              <GraduationCap className="h-3 w-3" />{" "}
-              {course.grade + " - " + course.group}
-            </span>
-          </div>
-        </div>
-
-        <div className="p-6 flex flex-col space-y-4">
-          <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-              {course.code} ({course.group})
-            </p>
-            <h3 className="text-xl font-extrabold text-foreground">
-              {course.name}
-            </h3>
-            <p className="text-sm text-muted-foreground pt-1 line-clamp-2">
-              {course.description}
-            </p>
-          </div>
-
-          <div className="flex gap-2 pt-4 border-t border-border/50">
-            {esEstudiante ? (
-              <Button
-                variant="default"
-                className="flex-1 gap-2 shadow-md transition-all"
-                onClick={() => handleIngresarCurso(course.id)}
-              >
-                <Eye className="h-4 w-4" />
-                Ingresar al Curso
-              </Button>
-            ) : eliminacionPendiente ? (
-              <div className="flex gap-2 w-full justify-between">
-                <Button
-                  variant="destructive"
-                  className="flex-1 gap-2 shadow-sm"
-                  onClick={() => handleEliminacionConfirmada(course.id)}
-                  disabled={eliminarCurso.isPending}
-                >
-                  {eliminarCurso.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Check className="h-4 w-4" />
-                  )}
-                  {eliminarCurso.isPending ? "Eliminando..." : "Confirmar Eliminación"}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="gap-2"
-                  onClick={() => setIdConfirmacionEliminar(null)}
-                  disabled={eliminarCurso.isPending}
-                >
-                  <X className="h-4 w-4" /> Cancelar
-                </Button>
-              </div>
-            ) : (
-              <>
-                <Button
-                  variant="default"
-                  className="flex-1 gap-2 shadow-md transition-all"
-                  onClick={() => handleIngresarCurso(course.id)}
-                >
-                  Ingresar al Curso <ChevronRight className="h-4 w-4" />
-                </Button>
-
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="text-highlight border-highlight/30 hover:bg-highlight/10"
-                  onClick={() => handleActualizarCurso(course.id)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="text-destructive border-destructive/30 hover:bg-destructive/10"
-                  onClick={() => setIdConfirmacionEliminar(course.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </Card>
-    );
-  };
-
-  const error = errorFetch as Error;
+  const error = errorFetch as Error | null;
 
   return (
-    <div className="p-4 md:p-8 space-y-8 min-h-screen bg-background">
-      <header className="flex justify-between items-center pb-4 border-b border-border">
-        <h1 className="text-3xl font-extrabold text-foreground flex items-center gap-3">
-          <Zap className="h-7 w-7 text-primary" />
-          {esEstudiante ? "MIS CURSOS" : "MIS CURSOS"}
-        </h1>
-
-        {!esEstudiante && (
-          <Button
-            onClick={handleCrearCurso}
-            className="bg-highlight hover:bg-highlight/90 text-highlight-foreground gap-2 shadow-md"
-            disabled={crearCurso.isPending}
-          >
-            <Plus className="h-4 w-4" />
-            {crearCurso.isPending ? "Creando..." : "Crear Curso"}
-          </Button>
-        )}
-      </header>
+    <>
+      <PageHeader
+        title="Mis cursos"
+        description={esEstudiante ? "Cursos en los que estás inscrito." : "Cursos que impartes."}
+        actions={
+          !esEstudiante && (
+            <button type="button" onClick={handleCrearCurso} className="btn-primary" disabled={crearCurso.isPending}>
+              <Plus className="size-4" aria-hidden="true" />
+              {crearCurso.isPending ? "Creando…" : "Crear curso"}
+            </button>
+          )
+        }
+      />
 
       {isLoading && (
-        <div className="flex justify-center items-center h-48">
-          <Loader2 className="mr-2 h-8 w-8 animate-spin text-primary" />
-          <span className="text-lg font-medium text-muted-foreground">
-            Cargando cursos...
-          </span>
-        </div>
+        <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3" aria-label="Cargando cursos">
+          {Array.from({ length: 3 }, (_, i) => (
+            <li key={i} className="card-base overflow-hidden" aria-hidden="true">
+              <Skeleton className="h-32 w-full rounded-none" />
+              <div className="space-y-3 p-5">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-5 w-2/3" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
 
       {error && (
-        <Alert variant="destructive">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
-            {error.message || "Error al cargar los cursos."}
-            <Button
-              variant="outline"
-              size="sm"
-              className="ml-4"
-              onClick={() => refetch()}
-            >
-              Reintentar
-            </Button>
-          </AlertDescription>
-        </Alert>
+        <div className="card-base">
+          <EmptyState
+            icon={AlertTriangle}
+            tone="error"
+            title="No pudimos cargar los cursos"
+            description={error.message || "Revisa tu conexión e inténtalo de nuevo."}
+            action={
+              <button type="button" className="btn-secondary" onClick={() => refetch()}>
+                <RefreshCw className="size-4" aria-hidden="true" /> Reintentar
+              </button>
+            }
+          />
+        </div>
       )}
 
       {!isLoading && !error && cursos.length > 0 && (
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {cursos.map((curso) => (
-            <TarjetaCurso key={curso.id} course={curso} />
+            <li key={curso.id} className="flex">
+              <CourseCard
+                course={curso}
+                isStudent={esEstudiante}
+                onEnter={handleIngresarCurso}
+                onEdit={handleActualizarCurso}
+                onDelete={setCursoAEliminar}
+              />
+            </li>
           ))}
-        </section>
+        </ul>
       )}
 
       {!isLoading && !error && cursos.length === 0 && (
-        <div className="text-center py-12">
-          <BookOpen className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold text-foreground">
-            {esEstudiante ? "No hay cursos inscritos" : "No se encontraron cursos"}
-          </h3>
-          <p className="text-muted-foreground mb-4">
-            {esEstudiante
-              ? "Aún no estás inscrito en ningún curso."
-              : "Comienza creando tu primer curso."}
-          </p>
-          {!esEstudiante && (
-            <Button onClick={handleCrearCurso} className="gap-2">
-              <Plus className="h-4 w-4" /> Crear Tu Primer Curso
-            </Button>
-          )}
+        <div className="card-base">
+          <EmptyState
+            icon={BookOpen}
+            title={esEstudiante ? "Aún no estás inscrito en ningún curso" : "Todavía no tienes cursos"}
+            description={
+              esEstudiante ? "Cuando tu profesor te inscriba, tus cursos aparecerán aquí." : "Crea tu primer curso para empezar."
+            }
+            action={
+              !esEstudiante && (
+                <button type="button" onClick={handleCrearCurso} className="btn-primary">
+                  <Plus className="size-4" aria-hidden="true" /> Crear tu primer curso
+                </button>
+              )
+            }
+          />
         </div>
       )}
 
       {!esEstudiante && (
-        <CourseFormModal
-          open={modalFormularioAbierto}
-          onClose={handleCerrarModalFormulario}
-          initialData={cursoAEditar}
-          onSave={handleGuardarCurso}
-          isSaving={crearCurso.isPending || actualizarCurso.isPending}
-        />
+        <>
+          <CourseFormModal
+            open={modalFormularioAbierto}
+            onClose={handleCerrarModalFormulario}
+            initialData={cursoAEditar}
+            onSave={handleGuardarCurso}
+            isSaving={crearCurso.isPending || actualizarCurso.isPending}
+          />
+          <ConfirmDialog
+            open={cursoAEliminar !== null}
+            onOpenChange={(open) => !open && setCursoAEliminar(null)}
+            tone="destructive"
+            title="¿Eliminar este curso?"
+            description={
+              cursoAEliminar ? `Se eliminará el curso "${cursoAEliminar.name}".` : undefined
+            }
+            confirmLabel="Eliminar curso"
+            onConfirm={handleEliminacionConfirmada}
+          />
+        </>
       )}
-    </div>
+    </>
   );
 }
