@@ -74,9 +74,10 @@ const handleDownload = (file: AttachmentData) => {
 
 export function StudentTaskSubmissionView({ assignment, onExit }: StudentTaskSubmissionViewProps) {
 
-    console.log(assignment)
-    const isSubmitted = assignment.submission?.status === 'SUBMITTED' || assignment.submission?.status === 'GRADED'
     const isGraded = assignment.submission?.status === 'GRADED'
+    // "Late" comes from the submission status set by the backend (submittedAt > dueDate).
+    // assignment.isOverdue only means "the deadline has passed today", so it marked on-time work as late.
+    const isLate = assignment.submission?.status === 'LATE_SUBMITTED'
 
     
     if (!assignment.submission) {
@@ -201,8 +202,8 @@ export function StudentTaskSubmissionView({ assignment, onExit }: StudentTaskSub
 
           <div className="bg-card rounded-2xl border border-border p-4 text-center space-y-1">
             <Calendar className="w-7 h-7 mx-auto text-primary" />
-            <p className={`text-base font-bold ${assignment.isOverdue ? 'text-destructive' : 'text-primary'}`}>
-              {assignment.isOverdue ? 'Tarde' : 'A Tiempo'}
+            <p className={`text-base font-bold ${isLate ? 'text-destructive' : 'text-primary'}`}>
+              {isLate ? 'Tarde' : 'A Tiempo'}
             </p>
             <p className="text-xs text-muted-foreground">Envío</p>
           </div>
@@ -381,10 +382,10 @@ export function StudentTaskSubmissionView({ assignment, onExit }: StudentTaskSub
                   label: 'Fecha Límite',
                   value: (
                     <div>
-                      <p className={`text-xs font-medium ${assignment.isOverdue ? 'text-destructive' : 'text-foreground'}`}>
+                      <p className={`text-xs font-medium ${isLate ? 'text-destructive' : 'text-foreground'}`}>
                         {assignment.deadline}
                       </p>
-                      {assignment.isOverdue && (
+                      {isLate && (
                         <p className="text-xs text-destructive">(Envío Tardío)</p>
                       )}
                     </div>
