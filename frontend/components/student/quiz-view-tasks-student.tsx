@@ -313,10 +313,13 @@ return (
             <p className="text-sm text-muted-foreground mt-1">{assignment.description}</p>
           </div>
           <button
+            type="button"
+            data-overlay-close
+            aria-label="Salir de la tarea"
             onClick={() => setShowExitConfirm(true)}
             className="p-2 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all flex-shrink-0"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
 
