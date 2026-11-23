@@ -80,7 +80,6 @@ export function VistaQuizEstudiante({
     );
   }
 
-  console.log("Datos del cuestionario:", quiz);
 
   return (
     <QuizView

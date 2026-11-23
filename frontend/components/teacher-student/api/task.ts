@@ -146,7 +146,6 @@ export async function fetchThisWeekTasks(
   try {
     const endpoint = userType === 'teacher' ? 'teacher' : 'student';
     const response = await apiClient.get<AssignmentDTO[]>(`/api/assignments/calendar/${endpoint}/${userId}/week?weekStart=${weekStart}`);
-    console.log("API Response:", response.data);
     const tasks = await Promise.all(response.data.map(dto => mapAssignmentFromBackend(dto)));
     return tasks;
   } catch (error) {
@@ -221,7 +220,6 @@ export async function fetchTasksByCourse(courseId: string): Promise<Assignment[]
 
 export async function fetchTasksByUnit(courseId: string, unitId: string): Promise<Assignment[]> {
   try {
-    console.log(`API: Fetching tasks for course ${courseId} and unit ${unitId}`);
     const response = await apiClient.get<AssignmentDTO[]>(`/api/assignments/course/${courseId}/unit/${unitId}`);
     const tasks = await Promise.all(response.data.map(dto => mapAssignmentFromBackend(dto)));
     return tasks;

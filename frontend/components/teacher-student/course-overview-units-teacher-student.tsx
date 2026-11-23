@@ -117,8 +117,6 @@ export function CourseOverview({
 
   try {
     if (unidadId) {
-      console.log("Actualizando unidad con ID:", unidadId);
-      console.log("Tiene nuevo archivo de imagen:", !!archivoImagen);
       
       const unidadActual = unidades?.find(u => u.id === unidadId);
       const urlImagenAnterior = unidadActual?.urlImage;
@@ -138,8 +136,6 @@ export function CourseOverview({
         }
       );
     } else {
-      console.log("Creando nueva unidad");
-      console.log("Tiene archivo de imagen:", !!archivoImagen);
       
       await crearUnidad.mutateAsync(
         {
@@ -355,12 +351,13 @@ const TarjetaUnidad: React.FC<PropsTarjetaUnidad> = ({
         )}
 
         {!isStudent && (
-          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
+                  aria-label={`Opciones de ${unidad.name}`}
                   className="h-8 w-8 bg-white/80 hover:bg-white"
                 >
                   <MoreVertical className="h-4 w-4" />
