@@ -51,10 +51,23 @@ export function CourseGroups({ courseId }: PropsGruposCurso) {
   const { 
     data: datosUsuariosDisponibles, 
     isLoading: cargandoUsuarios,
-    error: errorUsuarios 
+    error: errorUsuarios,
+    isFetching: recargandoUsuarios,
+    refetch: recargarUsuarios,
   } = useAvailableUsers(courseId);
 
   const usuariosDisponibles = datosUsuariosDisponibles?.users || [];
+
+  const estadoCargaUsuarios = cargandoUsuarios ? (
+    <p className="text-sm text-muted-foreground text-center py-2" role="status">Cargando estudiantes...</p>
+  ) : errorUsuarios ? (
+    <div className="text-sm text-center py-2 space-y-2" role="alert">
+      <p className="text-destructive">No se pudieron cargar los estudiantes.</p>
+      <Button variant="outline" size="sm" disabled={recargandoUsuarios} onClick={() => void recargarUsuarios()}>
+        Reintentar
+      </Button>
+    </div>
+  ) : null;
 
   const {
     createTeam: crearEquipo, 
@@ -130,7 +143,10 @@ const nuevosDatosEquipo: TeamWithIds = {
     eliminarEquipo.mutate({ courseId, teamId: equipoId }, {
       onSuccess: () => {
         setConfirmacionEliminarEquipo(null);
-      }
+      },
+      onError: () => {
+        toast.error("No se pudo eliminar el grupo. Inténtalo de nuevo.");
+      },
     });
   };
 
@@ -158,7 +174,11 @@ const nuevosDatosEquipo: TeamWithIds = {
 
   const handleEliminarMiembro = async (equipoId: string, miembroId: UserId) => {
     if (!esProfesor) return;
-    eliminarMiembro.mutate({ courseId, teamId: equipoId, memberId: miembroId });
+    eliminarMiembro.mutate({ courseId, teamId: equipoId, memberId: miembroId }, {
+      onError: () => {
+        toast.error("No se pudo retirar al integrante del grupo. Inténtalo de nuevo.");
+      },
+    });
   };
 
   const obtenerUsuarioPorId = (usuarioId: UserId): Usuario | undefined => {
@@ -345,7 +365,7 @@ if (!esProfesor) {
             <div>
               <Label className="text-foreground font-semibold">Miembros (Opcional)</Label>
               <div className="mt-2 space-y-2 max-h-40 overflow-y-auto border border-border rounded-md p-2">
-                {usuariosDisponibles.length === 0 ? (
+                {estadoCargaUsuarios ?? (usuariosDisponibles.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-2">
                     No hay usuarios disponibles
                   </p>
@@ -372,7 +392,7 @@ if (!esProfesor) {
                       </span>
                     </label>
                   ))
-                )}
+                ))}
               </div>
             </div>
           </div>
@@ -463,7 +483,7 @@ if (!esProfesor) {
               />
             </div>
             <div className="space-y-2 max-h-60 overflow-y-auto border border-border rounded-md p-2">
-              {usuariosDisponiblesFiltrados.length === 0 ? (
+              {estadoCargaUsuarios ?? (usuariosDisponiblesFiltrados.length === 0 ? (
                 <p className="text-center text-muted-foreground py-4">No se encontraron estudiantes</p>
               ) : (
                 usuariosDisponiblesFiltrados.map((usuario) => (
@@ -488,7 +508,7 @@ if (!esProfesor) {
                     </span>
                   </label>
                 ))
-              )}
+              ))}
             </div>
           </div>
           <DialogFooter>
