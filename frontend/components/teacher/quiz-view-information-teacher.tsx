@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { toast } from "sonner";
 import { useEffect, useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -98,6 +99,7 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
 
   const [mostrarRespuestasCorrectas, setMostrarRespuestasCorrectas] = useState(tipoUsuario === "teacher");
   const [modoEdicion, setModoEdicion] = useState(false);
+  const [puntuacionTotalInicial, setPuntuacionTotalInicial] = useState(datosQuiz.maxGrade ?? 100);
   const [datosEdicion, setDatosEdicion] = useState<DatosEdicion>({
     title: datosQuiz.title,
     description: datosQuiz.description,
@@ -115,7 +117,7 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
   const [mostrarPrevisualizacionRedistribucion, setMostrarPrevisualizacionRedistribucion] = useState(false);
 
   useEffect(() => {
-  if (quiz) {
+    if (!quiz || modoEdicion) return;
     setDatosEdicion({
       title: quiz.title,
       description: quiz.description,
@@ -126,9 +128,11 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
       allowSeeResults: quiz.allowSeeResults,
       totalScore: quiz.maxGrade ?? quiz.maxGrade ?? 100,
     });
-    setPreguntasEdicion(quiz.questions ?? []);
-  }
-}, [quiz]);
+  }, [quiz, modoEdicion]);
+
+  useEffect(() => {
+    if (quiz && !editandoPreguntas) setPreguntasEdicion(quiz.questions ?? []);
+  }, [quiz, editandoPreguntas]);
 
   const puntosTotales = preguntasEdicion.reduce((sum, q) => sum + (q.points ?? 0), 0);
   const cantidadOpcionMultiple = preguntasEdicion.filter((q) => q.type === "multiple-choice").length;
@@ -141,10 +145,12 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
   }, [preguntasEdicion, datosEdicion.totalScore]);
 
   const puntuacionTotalCambio =
-    datosEdicion.totalScore !== (datosQuiz.maxGrade ?? datosQuiz.maxGrade ?? 100);
+    datosEdicion.totalScore !== puntuacionTotalInicial;
 
+  const [guardandoPreguntas, setGuardandoPreguntas] = useState(false);
   const cargando =
     cargandoQuiz ||
+    guardandoPreguntas ||
     updateQuiz.isPending ||
     addQuestionsBulk.isPending ||
     updateQuestionsBulk.isPending ||
@@ -159,6 +165,7 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
     try {
       await updateQuiz.mutateAsync({
         quizId: datosQuiz.id,
+        redistributeQuestionPoints: puntuacionTotalCambio,
         quizData: {
           title: datosEdicion.title,
           description: datosEdicion.description,
@@ -173,12 +180,16 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
       setModoEdicion(false);
       setMostrarPrevisualizacionRedistribucion(false);
       refetch();
-    } catch (error) {
-      console.error("Error al actualizar el quiz:", error);
+    } catch {
+      toast.error("No se pudieron completar los cambios del cuestionario. Inténtalo de nuevo.");
     }
   };
 
   const handleGuardarPreguntas = async () => {
+    if (cargando) return;
+    setGuardandoPreguntas(true);
+    let configuracionGuardada = false;
+
     try {
       await updateQuiz.mutateAsync({
         quizId: datosQuiz.id,
@@ -194,26 +205,15 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
         },
       });
 
+      configuracionGuardada = true;
+
       if (idsPreguntasEliminadas.length > 0) {
         await deleteQuestionsBulk.mutateAsync({ quizId: datosQuiz.id, questionIds: idsPreguntasEliminadas });
+        setIdsPreguntasEliminadas([]);
       }
 
       const preguntasNuevas = preguntasEdicion.filter((q) => q.id.startsWith("temp_"));
       const preguntasExistentes = preguntasEdicion.filter((q) => !q.id.startsWith("temp_"));
-
-      if (preguntasNuevas.length > 0) {
-        await addQuestionsBulk.mutateAsync({
-          quizId: datosQuiz.id,
-          questions: preguntasNuevas.map((q) => ({
-            question: q.question,
-            type: q.type,
-            points: q.points,
-            options: q.type === "multiple-choice" ? q.options : undefined,
-            correctAnswer: q.type === "multiple-choice" ? q.correctAnswer : undefined,
-            expectedAnswer: q.type === "open-ended" ? q.expectedAnswer : undefined,
-          })) as Omit<Question, "id" | "text" | "maxPoints">[],
-        });
-      }
 
       if (preguntasExistentes.length > 0) {
         await updateQuestionsBulk.mutateAsync({
@@ -231,12 +231,31 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
         });
       }
 
+      if (preguntasNuevas.length > 0) {
+        await addQuestionsBulk.mutateAsync({
+          quizId: datosQuiz.id,
+          questions: preguntasNuevas.map((q) => ({
+            question: q.question,
+            type: q.type,
+            points: q.points,
+            options: q.type === "multiple-choice" ? q.options : undefined,
+            correctAnswer: q.type === "multiple-choice" ? q.correctAnswer : undefined,
+            expectedAnswer: q.type === "open-ended" ? q.expectedAnswer : undefined,
+          })) as Omit<Question, "id" | "text" | "maxPoints">[],
+        });
+      }
+
       setEditandoPreguntas(false);
       setIdsPreguntasEliminadas([]);
       await refetch();
-    } catch (error) {
-      console.error("Error al actualizar las preguntas:", error);
-      alert("Error al guardar las preguntas. Por favor, intente de nuevo.");
+    } catch {
+      toast.error(
+        configuracionGuardada
+          ? "Se guardó parte de los cambios. Vuelve a intentar guardar las preguntas."
+          : "No se pudo completar el guardado de las preguntas. Inténtalo de nuevo."
+      );
+    } finally {
+      setGuardandoPreguntas(false);
     }
   };
 
@@ -365,7 +384,7 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
     );
   }
 
-  if (errorQuiz) {
+  if (errorQuiz && !modoEdicion && !editandoPreguntas) {
     return (
       <div className="min-h-screen bg-background p-4 md:p-6">
         <div className="max-w-4xl mx-auto">
@@ -473,7 +492,10 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
               ) : (
                 <>
                   <button
-                    onClick={() => setModoEdicion(true)}
+                    onClick={() => {
+                      setPuntuacionTotalInicial(datosQuiz.maxGrade ?? 100);
+                      setModoEdicion(true);
+                    }}
                     className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
                   >
                     <Edit className="w-3.5 h-3.5" /> Editar Configuración
@@ -544,6 +566,7 @@ export function VistaQuiz({ quiz: quizInicial, onClose }: PropsVistaQuiz) {
                         </button>
                         <button
                           onClick={handleCancelarPreguntas}
+                          disabled={guardandoPreguntas}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
                         >
                           <XCircle className="w-3.5 h-3.5" /> Cancelar

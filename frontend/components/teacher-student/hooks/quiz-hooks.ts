@@ -8,7 +8,13 @@ import { Quiz as QuizEntity } from "@/app/domain/entities/CourseEntities";
 
 import { Quiz } from "@/app/shared/models/quiz.model";
 import { CourseId, UnitId } from "@/app/domain/valueObjects";
-import { fetchQuizzesByUnit, updateQuestionsAnswersBulk, updateQuestionsTextBulk, updateQuestionsTypesBulk } from "../api/quiz";
+import {
+  fetchQuizzesByUnit,
+  updateQuestionsAnswersBulk,
+  updateQuestionsPointsBulk as patchQuestionPoints,
+  updateQuestionsTextBulk,
+  updateQuestionsTypesBulk,
+} from "../api/quiz";
 import { 
   addQuizQuestion, 
   addQuizQuestionsBulk, 
@@ -150,6 +156,7 @@ export function useQuizMutations() {
       quizData,
     }: {
       quizId: string;
+      redistributeQuestionPoints?: boolean;
       quizData: Partial<Omit<Quiz, "id" | "courseId" | "courseUnitId" | "createdAt">>;
     }) => {
       console.log("🔄 [Hook] Updating quiz:", quizId);
@@ -164,26 +171,21 @@ export function useQuizMutations() {
         queryClient.setQueryData(quizKeys.detail(updatedQuiz.id), updatedQuiz);
       }
 
-      const newTotalScore = variables.quizData.totalScore;
-      if (newTotalScore !== undefined && updatedQuiz?.questions?.length > 0) {
-        const existingQuestions = updatedQuiz.questions.filter((q) => !q.id.startsWith("temp_"));
+      try {
+        const newTotalScore = variables.quizData.totalScore;
+        if (variables.redistributeQuestionPoints && newTotalScore !== undefined && updatedQuiz?.questions?.length > 0) {
+          const existingQuestions = updatedQuiz.questions.filter((q) => !q.id.startsWith("temp_"));
 
-        if (existingQuestions.length > 0) {
-          const pointUpdates = redistributePoints(existingQuestions, newTotalScore);
-          console.log("📊 [Hook] Redistributing points:", pointUpdates);
-
-          try {
-            await updateQuestionsPointsBulk(variables.quizId, pointUpdates);
-            console.log("✅ [Hook] Points redistributed successfully");
-          } catch (err) {
-            console.error("❌ [Hook] Failed to redistribute points:", err);
+          if (existingQuestions.length > 0) {
+            const pointUpdates = redistributePoints(existingQuestions, newTotalScore);
+            await patchQuestionPoints(variables.quizId, pointUpdates);
           }
         }
+      } finally {
+        await queryClient.invalidateQueries({ queryKey: quizKeys.detail(variables.quizId), refetchType: "active" });
+        await queryClient.invalidateQueries({ queryKey: quizKeys.lists(), refetchType: "active" });
+        await queryClient.refetchQueries({ queryKey: quizKeys.detail(variables.quizId), type: "active" });
       }
-
-      await queryClient.invalidateQueries({ queryKey: quizKeys.detail(variables.quizId), refetchType: "active" });
-      await queryClient.invalidateQueries({ queryKey: quizKeys.lists(), refetchType: "active" });
-      await queryClient.refetchQueries({ queryKey: quizKeys.detail(variables.quizId), type: "active" });
     },
     onError: (error) => { console.error("❌ [Hook] Error updating quiz:", error); },
   });

@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { toast } from "sonner";
 import * as React from "react";
 import { getCloudinaryDownloadUrl } from "@/app/utils/cloudinary/cloudinary-pdf";
 import { getDaysUntilDue } from "@/app/presentation/hooks/calendar/date-utils";
@@ -74,6 +75,7 @@ export function VistaInfoTarea({ assignment, onClose }: PropsVistaInfoTarea) {
 
   console.log("tarea en vista info", assignment);
   React.useEffect(() => {
+    if (modoEdicion) return;
     setDatosEdicion({
       title: assignment.title,
       description: assignment.description,
@@ -84,7 +86,7 @@ export function VistaInfoTarea({ assignment, onClose }: PropsVistaInfoTarea) {
       deliveryMode: assignment.deliveryMode,
       submissionFormat: assignment.submissionFormat
     });
-  }, [assignment]);
+  }, [assignment, modoEdicion]);
 
   const esUrlValida = (url: string): boolean => {
     try {
@@ -152,8 +154,8 @@ export function VistaInfoTarea({ assignment, onClose }: PropsVistaInfoTarea) {
         }
       });
       setModoEdicion(false);
-    } catch (error) {
-      console.error("Error al actualizar la tarea:", error);
+    } catch {
+      toast.error("No se pudo guardar la tarea. Inténtalo de nuevo.");
     }
   };
 

@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { toast } from "sonner";
 import * as React from "react";
 import { getCloudinaryDownloadUrl } from "@/app/utils/cloudinary/cloudinary-pdf";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -73,11 +74,12 @@ export function VistaPagina({ page: paginaInicial, onClose }: PropsVistaPagina) 
   const referenciaInputArchivo = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
+    if (modoEdicion) return;
     setDatosEdicion({
       title: pagina.title,
       sectionContent: pagina.sectionContent
     });
-  }, [pagina.title, pagina.sectionContent]);
+  }, [pagina.title, pagina.sectionContent, modoEdicion]);
 
   const esUrlValida = (url: string): boolean => {
     try {
@@ -138,8 +140,8 @@ export function VistaPagina({ page: paginaInicial, onClose }: PropsVistaPagina) 
         }
       });
       setModoEdicion(false);
-    } catch (error) {
-      console.error("Error al actualizar la página:", error);
+    } catch {
+      toast.error("No se pudo guardar la página. Inténtalo de nuevo.");
     }
   };
 
