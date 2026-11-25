@@ -231,6 +231,9 @@ export function UnitDetail({
         recargarQuizzes();
         recargarPaginas();
       },
+      onError: () => {
+        toast.error("No se pudo eliminar el recurso. Inténtalo de nuevo.");
+      },
     };
 
     switch (tipoRecurso) {

@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { toast } from "sonner";
 import * as React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -119,8 +120,8 @@ export function CourseDashboard() {
           }
         );
       }
-    } catch (error) {
-      console.error("Error al guardar el curso:", error);
+    } catch {
+      toast.error("No se pudo guardar el curso. Inténtalo de nuevo.");
     }
   };
 
@@ -133,6 +134,9 @@ export function CourseDashboard() {
     eliminarCurso.mutate(cursoId, {
       onSuccess: () => {
         setIdConfirmacionEliminar(null);
+      },
+      onError: () => {
+        toast.error("No se pudo eliminar el curso. Inténtalo de nuevo.");
       },
     });
   };

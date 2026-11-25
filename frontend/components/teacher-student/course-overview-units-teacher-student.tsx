@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { toast } from "sonner";
 import * as React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -154,8 +155,8 @@ export function CourseOverview({
         }
       );
     }
-  } catch (error) {
-    console.error("Error al guardar la unidad:", error);
+  } catch {
+    toast.error("No se pudo guardar la unidad. Inténtalo de nuevo.");
   }
 };
 
@@ -165,6 +166,9 @@ export function CourseOverview({
       onSuccess: () => {
         setIdConfirmacionEliminar(null);
         recargarUnidades();
+      },
+      onError: () => {
+        toast.error("No se pudo eliminar la unidad. Inténtalo de nuevo.");
       },
     });
   };
