@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { toast } from "sonner";
 import * as React from "react";
 import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
@@ -54,7 +55,10 @@ export function CourseStudents({ courseId }: PropsEstudiantesCurso) {
 
   const {
     data: resultadosBusqueda = [], 
-    isLoading: buscando 
+    isLoading: buscando,
+    isFetching: buscandoDeNuevo,
+    isError: errorBusqueda,
+    refetch: recargarBusqueda,
   } = useAvailableUsersSearch(courseId, terminoBusquedaInscripcion);
 
   const inscripcionesFiltradas = useMemo(() => {
@@ -78,7 +82,10 @@ export function CourseStudents({ courseId }: PropsEstudiantesCurso) {
         setTerminoBusquedaInscripcion('');
         setIdsUsuarioSeleccionados([]);
         setMostrarModalInscripcion(false);
-      }
+      },
+      onError: () => {
+        toast.error("No se pudo inscribir al estudiante. Inténtalo de nuevo.");
+      },
     });
   };
 
@@ -93,7 +100,10 @@ export function CourseStudents({ courseId }: PropsEstudiantesCurso) {
         setIdsUsuarioSeleccionados([]);
         setTerminoBusquedaInscripcion('');
         setMostrarModalInscripcion(false);
-      }
+      },
+      onError: () => {
+        toast.error("No se pudo completar la inscripción masiva. Inténtalo de nuevo.");
+      },
     });
   };
 
@@ -107,7 +117,10 @@ export function CourseStudents({ courseId }: PropsEstudiantesCurso) {
       onSuccess: () => {
         setMostrarModalEliminar(false);
         setInscripcionSeleccionada(null);
-      }
+      },
+      onError: () => {
+        toast.error("No se pudo dar de baja al estudiante. Inténtalo de nuevo.");
+      },
     });
   };
 
@@ -324,13 +337,22 @@ if (!esProfesor) {
                 </div>
               )}
 
-              {!buscando && resultadosBusqueda.length === 0 && terminoBusquedaInscripcion && (
+              {errorBusqueda && (
+                <div className="p-4 text-center space-y-2" role="alert">
+                  <p className="text-destructive">No se pudieron buscar estudiantes.</p>
+                  <Button variant="outline" size="sm" disabled={buscandoDeNuevo} onClick={() => void recargarBusqueda()}>
+                    Reintentar
+                  </Button>
+                </div>
+              )}
+
+              {!buscando && !errorBusqueda && resultadosBusqueda.length === 0 && terminoBusquedaInscripcion && (
                 <div className="p-4 text-center text-muted-foreground">
                   No se encontraron estudiantes disponibles que coincidan con "{terminoBusquedaInscripcion}"
                 </div>
               )}
 
-              {resultadosBusqueda.map((usuario) => (
+              {!errorBusqueda && resultadosBusqueda.map((usuario) => (
                 <div
                   key={usuario.id}
                   className="flex items-center justify-between p-3 hover:bg-muted/50 border-b border-border last:border-b-0 transition-colors"
