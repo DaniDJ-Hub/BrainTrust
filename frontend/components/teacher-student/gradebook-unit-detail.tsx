@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { toast } from "sonner";
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -119,8 +120,8 @@ export function GradebookUnitDetail({
       setValorCalificacion('');
       setRetroalimentacion('');
       actualizar();
-    } catch (error) {
-      console.error('Error al asignar la calificación de la unidad:', error);
+    } catch {
+      toast.error("No se pudo guardar la calificación final de la unidad. Inténtalo de nuevo.");
     } finally {
       setAsignandoCalificacion(false);
     }

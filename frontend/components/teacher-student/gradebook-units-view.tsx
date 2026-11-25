@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { toast } from "sonner";
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -105,8 +106,8 @@ export function GradebookUnitsView({
       setUnidadIdSeleccionada(null);
       setValorCalificacion('');
       setRetroalimentacion('');
-    } catch (error) {
-      console.error('Error al asignar la calificación de la unidad:', error);
+    } catch {
+      toast.error("No se pudo guardar la calificación final de la unidad. Inténtalo de nuevo.");
     } finally {
       setAsignandoCalificacion(false);
     }
@@ -120,8 +121,8 @@ export function GradebookUnitsView({
       setDialogoCursoStudentId(null);
       setValorCalificacion('');
       setRetroalimentacion('');
-    } catch (error) {
-      console.error('Error al asignar la calificación del curso:', error);
+    } catch {
+      toast.error("No se pudo guardar la calificación final del curso. Inténtalo de nuevo.");
     } finally {
       setAsignandoCalificacion(false);
     }
