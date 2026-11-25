@@ -70,9 +70,9 @@ export function CoursesSectionTeacher({ teacherId }: CoursesSectionProps) {
     return (
       <Card className="p-6 h-40 flex flex-col items-center justify-center space-y-3">
         <p className="text-muted-foreground font-semibold">No se encontraron cursos activos.</p>
-        <button className="text-sm font-medium text-primary hover:underline">
-          Ver Cursos Archivados
-        </button>
+        <Link href="/courses" className="text-sm font-medium text-primary hover:underline">
+          Ir a Cursos
+        </Link>
       </Card>
     );
   }
