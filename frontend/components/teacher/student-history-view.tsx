@@ -149,7 +149,7 @@ function PlagiarismMatchRow({
   const [expanded, setExpanded] = useState(false);
   const pct = parseFloat(match.overallSimilarityPercentage ?? "0");
 
-  const { data: check, isLoading } = useQuery({
+  const { data: check, isLoading, isError, isFetching, refetch } = useQuery({
     queryKey: ["plagiarism-check", match.plagiarismCheckId],
     queryFn: () => fetchPlagiarismResultsForSubmission(submissionId),
     enabled: expanded,
@@ -182,6 +182,13 @@ function PlagiarismMatchRow({
         <div className="border-t p-2.5 space-y-3">
           {isLoading ? (
             <p className="text-center text-muted-foreground py-2">Cargando párrafos...</p>
+          ) : isError ? (
+            <div className="text-center py-2 space-y-2" role="alert">
+              <p className="text-destructive">No se pudo cargar el detalle de la coincidencia.</p>
+              <Button variant="outline" size="sm" disabled={isFetching} onClick={() => void refetch()}>
+                Reintentar
+              </Button>
+            </div>
           ) : check?.similarParagraphs?.length ? (
             check.similarParagraphs.map((para, i) => (
               <div key={i} className="space-y-1.5">
