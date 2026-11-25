@@ -12,7 +12,7 @@ interface CourseUnitDTO {
   id: string;
   courseId: string;
   name: string;
-  urlImage: string;
+  urlImage: string | null;
   numUnity: number;
   description: string;
 }
@@ -34,7 +34,7 @@ interface UpdateUnitRequest {
   unitId: string;
   name: string;
   description: string;
-  urlImage: string;
+  urlImage: string | null;
 }
 
 interface SuccessResponseDTO {
@@ -70,10 +70,10 @@ apiClient.interceptors.request.use(
   }
 );
 
-const handleApiError = (error: unknown): never => {
+const handleApiError = (error: unknown, redirectOnError = true): never => {
   if (axios.isAxiosError(error)) {
     const errorMessage = error.response?.data?.message || error.message;
-    redirect("/courses");
+    if (redirectOnError) redirect("/courses");
     throw new Error(errorMessage);
   }
   throw error;
@@ -113,7 +113,7 @@ function mapUpdateUnitToBackendCommand(unitId: string, data: Partial<Omit<Course
     unitId,
     name: data.name || "",
     description: data.description || "",
-    urlImage: data.urlImage || ""
+    urlImage: data.urlImage?.trim() || null
   };
 }
 
@@ -205,18 +205,13 @@ export async function updateUnit(
   unitData: Partial<Omit<CourseUnit, "id" | "courseId" | "resources">>
 ): Promise<CourseUnit> {
   try {
-    const backendCommand = {
-      unitId,
-      name: unitData.name || "",
-      description: unitData.description || "",
-      urlImage: unitData.urlImage || ""
-    };
+    const backendCommand = mapUpdateUnitToBackendCommand(unitId, unitData);
     
     const response = await apiClient.put<CourseUnitDTO>(`/api/courses/units/${unitId}`, backendCommand);
 
     return mapCourseUnitFromBackend(response.data);
   } catch (error) {
-    return handleApiError(error);
+    return handleApiError(error, false);
   }
 }
 
