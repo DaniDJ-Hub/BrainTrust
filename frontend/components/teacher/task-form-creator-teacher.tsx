@@ -105,7 +105,7 @@ const esquemaUrl = z.string()
 interface PropsCreadorTarea {
   open: boolean
   onClose: () => void
-  onSave: (task: any, files?: File[]) => void
+  onSave: (task: any, files?: File[]) => Promise<boolean>
   idCourse: string
   idUnit: string
 }
@@ -122,7 +122,7 @@ export function CreadorTarea({ open, onClose, onSave, idCourse, idUnit }: PropsC
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
     reset,
     setValue,
     watch
@@ -203,7 +203,7 @@ function obtenerArrayExtensionesPermitidas(tiposMime: string[]): string[] {
   
   return tiposMime.flatMap(tipo => mapaExtensiones[tipo] || []);
 }
-const alEnviar = (data: DatosFormularioTarea) => {
+const alEnviar = async (data: DatosFormularioTarea) => {
   const valoresActualesFormulario = watch()
   
   const tarea = {
@@ -225,8 +225,7 @@ const alEnviar = (data: DatosFormularioTarea) => {
   console.log("tarea", tarea)
   console.log("URLs del formulario:", data.urls)
   console.log("URLs de valores observados:", valoresActualesFormulario.urls)
-  onSave(tarea, archivosSubidos)
-  handleCerrar()
+  if (await onSave(tarea, archivosSubidos)) handleCerrar()
 }
 
   const handleCerrar = () => {
@@ -338,7 +337,7 @@ const eliminarUrl = (indice: number) => {
     }
   } 
 return (
-  <Dialog open={open} onOpenChange={handleCerrar}>
+  <Dialog open={open} onOpenChange={(isOpen) => !isOpen && !isSubmitting && handleCerrar()}>
     <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
       <DialogHeader>
         <DialogTitle className="text-xl sm:text-2xl font-bold text-foreground">
@@ -689,12 +688,12 @@ return (
         </div>
 
         <DialogFooter className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-2">
-          <Button type="button" variant="outline" onClick={handleCerrar} className="text-sm">
+          <Button type="button" variant="outline" onClick={handleCerrar} disabled={isSubmitting} className="text-sm">
             Cancelar
           </Button>
           <Button 
             type="submit"
-            disabled={!isValid}
+            disabled={isSubmitting || !isValid}
             className="text-sm"
           >
             Crear Tarea

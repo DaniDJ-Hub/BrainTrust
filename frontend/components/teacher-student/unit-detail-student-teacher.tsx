@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import * as React from "react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -70,18 +71,21 @@ export function UnitDetail({
   const {
     data: tareas = [],
     isLoading: cargandoTareas,
+    error: errorTareas,
     refetch: recargarTareas,
   } = useAssignmentsByUnit(idCourse, idUnit);
 
   const {
     data: quizzes = [],
     isLoading: cargandoQuizzes,
+    error: errorQuizzes,
     refetch: recargarQuizzes,
   } = useQuizzesByUnit(idCourse, idUnit);
 
   const {
     data: paginas = [],
     isLoading: cargandoPaginas,
+    error: errorPaginas,
     refetch: recargarPaginas,
   } = usePagesByUnit(idCourse, idUnit);
 
@@ -124,6 +128,12 @@ export function UnitDetail({
     );
 
   const cargando = cargandoTareas || cargandoQuizzes || cargandoPaginas;
+  const recursosConError = [
+    { nombre: "tareas", error: errorTareas, recargar: recargarTareas },
+    { nombre: "cuestionarios", error: errorQuizzes, recargar: recargarQuizzes },
+    { nombre: "páginas", error: errorPaginas, recargar: recargarPaginas },
+  ].filter(({ error }) => error);
+
 
   function obtenerTipoRecurso(
     recurso: UnitResource
@@ -170,41 +180,38 @@ export function UnitDetail({
     return { available: true };
   };
 
-  const handleCrearRecurso = (datosRecurso: any, archivos?: File[]) => {
-    if (!tipoRecursoSeleccionado) return;
+  const handleCrearRecurso = async (datosRecurso: any, archivos?: File[]) => {
+    if (!tipoRecursoSeleccionado) return false;
+    const ubicacion = { courseId: idCourse, unitId: idUnit };
 
-    const configComun = {
-      courseId: idCourse,
-      unitId: idUnit,
-      onSuccess: () => {
-        setTipoRecursoSeleccionado(null);
-        recargarTareas();
-        recargarQuizzes();
-        recargarPaginas();
-      },
-    };
+    try {
+      switch (tipoRecursoSeleccionado) {
+        case "ASSIGNMENT":
+          await mutacionesTarea.createAssignment.mutateAsync({
+            ...ubicacion,
+            assignmentData: datosRecurso,
+            files: archivos,
+          });
+          break;
+        case "QUIZ":
+          await mutacionesQuiz.createQuiz.mutateAsync({
+            ...ubicacion,
+            quizData: datosRecurso,
+          });
+          break;
+        case "PAGE":
+          await mutacionesPagina.createPage.mutateAsync({
+            ...ubicacion,
+            pageData: datosRecurso,
+            attachments: archivos,
+          });
+          break;
+      }
 
-    switch (tipoRecursoSeleccionado) {
-      case "ASSIGNMENT":
-        mutacionesTarea.createAssignment.mutate({
-          ...configComun,
-          assignmentData: datosRecurso,
-          files: archivos,
-        });
-        break;
-      case "QUIZ":
-        mutacionesQuiz.createQuiz.mutate({
-          ...configComun,
-          quizData: datosRecurso,
-        });
-        break;
-      case "PAGE":
-        mutacionesPagina.createPage.mutate({
-          ...configComun,
-          pageData: datosRecurso,
-          attachments: archivos,
-        });
-        break;
+      return true;
+    } catch {
+      toast.error("No se pudo crear el recurso. Inténtalo de nuevo.");
+      return false;
     }
   };
 
@@ -601,7 +608,19 @@ return (
         </div>
 
         <div className="p-8 md:p-12">
-          {recursos.length === 0 ? (
+          {!esEstudiante && recursosConError.length > 0 ? (
+            <div className="text-center py-16 space-y-4" role="alert">
+              <p className="text-destructive text-lg">
+                No se pudieron cargar los recursos de la unidad ({recursosConError.map(({ nombre }) => nombre).join(", ")}).
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => recursosConError.forEach(({ recargar }) => void recargar())}
+              >
+                Reintentar
+              </Button>
+            </div>
+          ) : recursos.length === 0 ? (
             <div className="text-center py-16 space-y-4">
               <p className="text-muted-foreground text-lg">
                 {esEstudiante ? "No hay recursos disponibles" : "Aún no hay recursos"}

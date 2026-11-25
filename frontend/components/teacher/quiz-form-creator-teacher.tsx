@@ -120,7 +120,7 @@ type DatosFormularioQuiz = z.infer<typeof esquemaFormularioQuiz>
 interface PropsCreadorQuiz {
   open: boolean
   onClose: () => void
-  onSave: (quiz: any) => void
+  onSave: (quiz: any) => Promise<boolean>
   unitId: string
   courseId: string
 }
@@ -142,7 +142,7 @@ export function CreadorQuiz({ open, onClose, onSave, unitId, courseId }: PropsCr
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
     reset,
     setValue,
     watch,
@@ -230,7 +230,7 @@ export function CreadorQuiz({ open, onClose, onSave, unitId, courseId }: PropsCr
     }
   }
 
-  const alEnviar = (data: DatosFormularioQuiz) => {
+  const alEnviar = async (data: DatosFormularioQuiz) => {
     const quiz = {
       title: data.title,
       description: data.description,
@@ -248,8 +248,7 @@ export function CreadorQuiz({ open, onClose, onSave, unitId, courseId }: PropsCr
         expectedAnswer: q.type === "open-ended" ? q.expectedAnswer : undefined
       }))
     }
-    onSave(quiz)
-    handleCerrar()
+    if (await onSave(quiz)) handleCerrar()
   }
 
   const handleCerrar = () => {
@@ -290,7 +289,7 @@ export function CreadorQuiz({ open, onClose, onSave, unitId, courseId }: PropsCr
     ? "bg-red-500"
     : "bg-orange-400"
 return (
-  <Dialog open={open} onOpenChange={handleCerrar}>
+  <Dialog open={open} onOpenChange={(isOpen) => !isOpen && !isSubmitting && handleCerrar()}>
     <DialogContent className="bg-card rounded-3xl border border-border shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col p-0 sm:max-w-[95vw] md:max-w-6xl">
 
       <div className="flex items-center gap-3 px-5 py-4 sm:px-7 sm:py-5 border-b border-border flex-shrink-0 rounded-t-3xl">
@@ -748,14 +747,14 @@ return (
           <div className="flex flex-col-reverse sm:flex-row gap-3">
             <button
               type="button"
-              onClick={handleCerrar}
+              onClick={handleCerrar} disabled={isSubmitting}
               className="flex-1 flex items-center justify-center px-5 py-2.5 rounded-xl border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              disabled={!isValid || !porcentajeOk}
+              disabled={isSubmitting || !isValid || !porcentajeOk}
               className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
             >
               Crear Quiz

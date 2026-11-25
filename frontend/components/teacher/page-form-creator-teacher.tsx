@@ -99,7 +99,7 @@ export const PAGE_ACCEPTED_FORMATS = {
 interface PageCreatorProps {
   open: boolean;
   onClose: () => void;
-  onSave: (page: any, files?: File[]) => void;
+  onSave: (page: any, files?: File[]) => Promise<boolean>;
   unitId: string;
   courseId: string;
 }
@@ -119,7 +119,7 @@ export function PageCreator({
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
     reset,
     setValue,
     watch,
@@ -141,7 +141,7 @@ export function PageCreator({
     .split(/\s+/)
     .filter((word) => word.length > 0).length;
 
-  const handleSave = (data: PageFormData) => {
+  const handleSave = async (data: PageFormData) => {
     const page: Page = {
       ...data,
       id: `page-${Date.now()}`,
@@ -150,8 +150,7 @@ export function PageCreator({
       createdAt: new Date().toISOString(),
     };
 
-    onSave(page, attachmentFiles);
-    handleClose();
+    if (await onSave(page, attachmentFiles)) handleClose()
   };
 
   const handleClose = () => {
@@ -323,7 +322,7 @@ export function PageCreator({
   };
 
  return (
-  <Dialog open={open} onOpenChange={handleClose}>
+  <Dialog open={open} onOpenChange={(isOpen) => !isOpen && !isSubmitting && handleClose()}>
     <DialogContent className="bg-card rounded-3xl border border-border shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col p-0 sm:max-w-[95vw] md:max-w-6xl">
 
       <div className="flex items-center gap-3 px-5 py-4 sm:px-7 sm:py-5 border-b border-border flex-shrink-0 rounded-t-3xl">
@@ -653,14 +652,14 @@ export function PageCreator({
           <div className="flex flex-col-reverse sm:flex-row gap-3">
             <button
               type="button"
-              onClick={handleClose}
+              onClick={handleClose} disabled={isSubmitting}
               className="flex-1 flex items-center justify-center px-5 py-2.5 rounded-xl border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              disabled={!isValid}
+              disabled={isSubmitting || !isValid}
               className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
             >
               Crear Página
