@@ -105,27 +105,23 @@ const updateCourseMutation = useMutation({
     imageFile?: File | null;
     oldImageUrl?: string;
   }) => {
-    let finalCourseData = { ...courseData };
+    if (!imageFile) return updateCourse(courseId, courseData);
 
-    if (imageFile) {
-      console.log(`Uploading new image for course ${courseId}...`);
-      
-      if (oldImageUrl && oldImageUrl.includes('cloudinary.com')) {
-        try {
-          console.log('Deleting old image from Cloudinary...');
-          await deleteImageFromCloudinary(oldImageUrl);
-          console.log('✓ Old image deleted from Cloudinary');
-        } catch (deleteError) {
-          console.warn('Failed to delete old image from Cloudinary:', deleteError);
-        }
+    const uploadedUrl = await uploadImageFile(imageFile);
+    const updatedCourse = await updateCourse(courseId, {
+      ...courseData,
+      urlImage: uploadedUrl,
+    });
+
+    if (oldImageUrl?.includes("cloudinary.com") && oldImageUrl !== uploadedUrl) {
+      try {
+        await deleteImageFromCloudinary(oldImageUrl);
+      } catch (error) {
+        console.warn("Failed to delete old course image:", error);
       }
-      
-      const uploadedUrl = await uploadImageFile(imageFile);
-      finalCourseData.urlImage = uploadedUrl;
-      console.log('✓ New image uploaded to Cloudinary');
     }
 
-    return updateCourse(courseId, finalCourseData);
+    return updatedCourse;
   },
 
   onSuccess: (data, variables) => {
