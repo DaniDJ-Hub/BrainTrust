@@ -118,8 +118,13 @@ export function CourseTaskOverviewTeacher({
   const { updateGrade } =
     useTaskInventoryMutations();
 
-  const { data: quizzes = [], isLoading: isLoadingQuizzes } =
-    useQuizzesByCourseWithoutDetails(courseId, selectedUnitId);
+  const {
+    data: quizzes = [],
+    isLoading: isLoadingQuizzes,
+    isFetching: isFetchingQuizzes,
+    error: quizzesError,
+    refetch: refetchQuizzes,
+  } = useQuizzesByCourseWithoutDetails(courseId, selectedUnitId);
 
   const combinedItems: (TaskItem | QuizItem)[] = useMemo(() => {
     const taskItems: TaskItem[] = tasks.map((task) => ({
@@ -195,7 +200,7 @@ export function CourseTaskOverviewTeacher({
   };
 
   const handleViewQuiz = (quiz: StudentSubmissionQuiz) => {
-    setSelectedQuiz(quiz);
+    if (quiz.submission?.id) setSelectedQuiz(quiz);
   };
 
   const handleBackFromTask = () => {
@@ -321,13 +326,18 @@ export function CourseTaskOverviewTeacher({
       return (
         <Button
           onClick={() => handleViewQuiz(item.data)}
+          disabled={!item.data.submission?.id}
           variant="ghost"
           size="sm"
           className="text-green-600 hover:bg-green-100 transition-colors"
-          title="Ver Detalles del Cuestionario"
+          title={item.data.submission?.id ? "Ver Detalles del Cuestionario" : "Sin entrega"}
         >
-          <Eye className="h-5 w-5" />
-          <span className="sr-only">Ver Cuestionario</span>
+          {item.data.submission?.id ? (
+            <>
+              <Eye className="h-5 w-5" />
+              <span className="sr-only">Ver Cuestionario</span>
+            </>
+          ) : "Sin entrega"}
         </Button>
       );
     }
@@ -349,11 +359,12 @@ export function CourseTaskOverviewTeacher({
       return (
         <Button
           onClick={() => handleViewQuiz(item.data)}
+          disabled={!item.data.submission?.id}
           size="sm"
           className="flex-1 gap-2 bg-green-600 hover:bg-green-700"
         >
           <Eye className="h-4 w-4" />
-          Ver Cuestionario
+          {item.data.submission?.id ? "Ver Cuestionario" : "Sin entrega"}
         </Button>
       );
     }
@@ -452,12 +463,12 @@ export function CourseTaskOverviewTeacher({
   );
 }
 
-  if (selectedQuiz) {
+  if (selectedQuiz?.submission?.id) {
 
     console.log("selectedQuiz", selectedQuiz.submission);
     return (
       <QuizSubmissionsView
-        submissionId={selectedQuiz.submission?.id || ""}
+        submissionId={selectedQuiz.submission.id}
         onBack={handleBackFromQuiz}
       />
     );
@@ -481,7 +492,7 @@ export function CourseTaskOverviewTeacher({
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
             {selectedUnit?.name || "Tareas y Cuestionarios de la Unidad"}
           </h1>
-          {stats && (
+          {!quizzesError && (
             <div className="flex flex-wrap gap-3 mt-2">
               {[
                 { icon: BarChart3,   label: `Total: ${stats.totalTasks} elementos`         },
@@ -510,6 +521,19 @@ export function CourseTaskOverviewTeacher({
       />
     </div>
 
+    {quizzesError && (
+      <div className="flex items-center gap-3 p-4 rounded-2xl bg-destructive/10 border border-destructive/20" role="alert">
+        <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
+        <div>
+          <p className="text-sm font-semibold text-destructive">Error al cargar cuestionarios</p>
+          <p className="text-xs text-destructive/80">{quizzesError.message}</p>
+        </div>
+        <Button variant="outline" size="sm" disabled={isFetchingQuizzes} onClick={() => void refetchQuizzes()}>
+          Reintentar
+        </Button>
+      </div>
+    )}
+
     {tasksError && (
       <div className="flex items-center gap-3 p-4 rounded-2xl bg-destructive/10 border border-destructive/20">
         <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
@@ -523,9 +547,9 @@ export function CourseTaskOverviewTeacher({
     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-5">
       <TabsList className="w-full grid grid-cols-3 rounded-2xl bg-muted/50 p-1 h-auto">
         {[
-          { value: 'all',        icon: BarChart3,  label: `Todos (${combinedItems.length})`            },
+          { value: 'all',        icon: BarChart3,  label: quizzesError ? "Todos" : `Todos (${combinedItems.length})`            },
           { value: 'assignment', icon: FileText,   label: `Tareas (${stats.totalAssignments})`  },
-          { value: 'quiz',       icon: HelpCircle, label: `Cuestionarios (${stats.totalQuizzes})`          },
+          { value: 'quiz',       icon: HelpCircle, label: quizzesError ? "Cuestionarios" : `Cuestionarios (${stats.totalQuizzes})`          },
         ].map(({ value, icon: Icon, label }) => (
           <TabsTrigger
             key={value}
@@ -547,7 +571,7 @@ export function CourseTaskOverviewTeacher({
             <span className="text-sm">Cargando tareas y cuestionarios...</span>
           </div>
 
-        ) : tasksError ? (
+        ) : tasksError || quizzesError ? (
           <div className="flex flex-col items-center justify-center gap-2 py-16 text-destructive">
             <span className="text-2xl">⚠️</span>
             <p className="text-sm font-semibold">Error al cargar datos. Por favor, intenta de nuevo.</p>
