@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import { toast } from "sonner";
+
 import * as React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -188,11 +190,11 @@ export function QuizSubmissionsView({
         },
       },
       {
-        onSuccess: (entregaActualizada) => {
-          console.log("Calificaciones guardadas exitosamente:", entregaActualizada);
+        onSuccess: () => {
+          toast.success("Calificaciones guardadas exitosamente");
         },
-        onError: (error) => {
-          console.error("Error al guardar calificaciones:", error);
+        onError: () => {
+          toast.error("No se pudieron guardar las calificaciones. Inténtalo de nuevo.");
         },
       }
     );

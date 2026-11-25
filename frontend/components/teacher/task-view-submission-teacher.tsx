@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import { toast } from "sonner";
+
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
@@ -92,6 +94,13 @@ export function SubmissionDetailView({
 
   const handleEnviarCalificacion = () => {
     if (!data.submission) return;
+
+    const calificacion = Number(valorCalificacion);
+    if (!valorCalificacion.trim() || !Number.isFinite(calificacion) || calificacion < 0 || calificacion > data.maxPoints) {
+      toast.error(`Ingresa una calificación entre 0 y ${data.maxPoints}.`);
+      return;
+    }
+
     onUpdateGrade({
       submissionId: data.submission.id,
       teamMemberSubmissionIds: data.submission.teamMemberSubmissionIds,
